@@ -10,8 +10,8 @@ pytest_plugins = ["fixtures.companies_api_fixture"]
 class TestCompanies:
 
     @allure.title('Request to receive data on all companies')
-    def test_get_all_companies(self, companies_api_fixture):
-        response = companies_api_fixture.companies()
+    def test_get_all_companies(self, companies):
+        response = companies.companies()
         Asserts(response) \
             .status_code_should_be(200) \
-            .validate_response(Company)
+            .validate_schema(Company)

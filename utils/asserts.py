@@ -17,7 +17,7 @@ class Asserts:
         return self
 
     @allure.step("JSON response schema is valid")
-    def validate_response(self, schema) -> 'Asserts':
+    def validate_schema(self, schema) -> 'Asserts':
         """Check the received response for compliance with the JSON schema"""
         response_json = get_response_as_dict(self.response)
         try:
