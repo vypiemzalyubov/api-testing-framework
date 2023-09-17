@@ -1,5 +1,5 @@
 import pytest
-from api.companies_api import CompaniesApi
+from api.sendrequest_api.companies_api import CompaniesApi
 
 
 @pytest.fixture(scope="function", name="companies")

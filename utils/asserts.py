@@ -25,3 +25,10 @@ class Asserts:
         except ValidationError as e:
             raise AssertionError(f"JSON schema validation failed: {e}")
         return self
+
+    @allure.step("The response field contains the expected value")
+    def have_value_in_key(self, key: str, expected_value: str) -> 'Asserts':
+        """Checking the value in the specified key"""
+        response_json = get_response_as_dict(self.response)
+        assert expected_value == response_json[key], \
+            f"Response doesn't contain the {expected_value} in the key {key}"
