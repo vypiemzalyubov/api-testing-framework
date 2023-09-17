@@ -7,7 +7,7 @@ class CompaniesApi(ApiClient):
     _URL = "https://send-request.me"
     _ENDPOINT = "/api/companies/"
 
-    @allure.step('Обращение к /companies/')
+    @allure.step('Request to API /companies/')
     def companies(self, params: dict = None):
         return self.get(url=self._URL,
                         endpoint=self._ENDPOINT, params=params)
