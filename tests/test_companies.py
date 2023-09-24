@@ -5,7 +5,7 @@ from utils.models.companies_schema import Company
 
 
 pytest_plugins = ["fixtures.companies_api_fixture"]
-pytestmark = [allure.parent_suite("sendrequest"), 
+pytestmark = [allure.parent_suite("sendrequest"),
               allure.suite("companies")]
 
 
@@ -25,4 +25,4 @@ class TestCompanies:
         response = companies.companies(params)
         Asserts(response) \
             .status_code_should_be(422) \
-            # .have_value_in_key("msg", "value is not a valid enumeration member; permitted: 'ACTIVE', 'BANKRUPT', 'CLOSED'")
+            .have_value_in_key("msg", "value is not a valid enumeration member; permitted: 'ACTIVE', 'BANKRUPT', 'CLOSED'")
