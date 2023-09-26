@@ -41,7 +41,7 @@ class TestCompanies:
         Asserts(response) \
             .status_code_should_be(200) \
             .validate_schema(Company) \
-            .have_sum_of_value("data", total)
+            .has_sum_of_values("data", total)
 
     @allure.title("Request with invalid arguments of the \"status\" parameter")
     @pytest.mark.negative
@@ -61,7 +61,7 @@ class TestCompanies:
         response = companies.companies(params)
         Asserts(response) \
             .status_code_should_be(200) \
-            .have_sum_of_value("data", 7)
+            .has_sum_of_values("data", 7)
         
     @allure.title("Request to check filtering by offset greater than or equal to the total number of companies")
     @pytest.mark.negative
@@ -72,4 +72,4 @@ class TestCompanies:
         response = companies.companies(params)
         Asserts(response) \
             .status_code_should_be(200) \
-            .have_sum_of_value("data", total)        
+            .has_sum_of_values("data", total)        

@@ -48,7 +48,7 @@ class Asserts:
         return self
 
     @allure.step("The response contains the sum of the expected values")
-    def have_sum_of_value(self, key: str, sum_value: int) -> 'Asserts':
+    def has_sum_of_values(self, key: str, sum_value: int) -> 'Asserts':
         """Checking the sum of values by key"""
         response_json = get_response_as_dict(self.response)
         response_length = len(response_json[key])
