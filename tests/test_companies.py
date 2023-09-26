@@ -1,7 +1,7 @@
 import allure
 import pytest
 from utils.asserts import Asserts
-from utils.models.companies_schema import Company
+from utils.models.companies_model import Company
 
 
 pytest_plugins = ["fixtures.companies_api_fixture"]
