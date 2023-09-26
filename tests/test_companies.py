@@ -62,14 +62,14 @@ class TestCompanies:
         Asserts(response) \
             .status_code_should_be(200) \
             .has_sum_of_values("data", 7)
-        
+
     @allure.title("Request to check filtering by offset greater than or equal to the total number of companies")
     @pytest.mark.negative
     @pytest.mark.parametrize("offset, total",
-                             [(7, 0), (8, 0)])    
+                             [(7, 0), (8, 0)])
     def test_get_companies_by_offset_where_offset_greather_or_equal_total(self, companies, offset, total):
         params = {"offset": offset}
         response = companies.companies(params)
         Asserts(response) \
             .status_code_should_be(200) \
-            .has_sum_of_values("data", total)        
+            .has_sum_of_values("data", total)
