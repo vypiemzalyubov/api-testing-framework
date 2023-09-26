@@ -1,5 +1,6 @@
 import allure
 from pydantic import ValidationError
+from jsonpath_ng import parse
 from utils.parser import get_response_as_dict
 
 
@@ -34,10 +35,23 @@ class Asserts:
         return self
 
     @allure.step("The response field contains the expected value")
-    def have_value_in_key(self, key: str, expected_value: str) -> 'Asserts':
+    def have_value_in_key(self, path: str, expected_value: str) -> 'Asserts':
         """Checking the value in the specified key"""
         response_json = get_response_as_dict(self.response)
-        for item in response_json["detail"]:
-            assert expected_value == item[key], \
-                f"Response doesn't contain the {expected_value} in the key {key}"
+        try:
+            path = parse(path)
+            matches = [match.value for match in path.find(response_json)]
+            assert all(value == expected_value for value in matches), \
+                f"Response doesn't contain the \"{expected_value}\" at the path \"{path}\""
+        except Exception as e:
+            raise AssertionError(f"JSONPath assertion failed: {e}")
+        return self
+
+    @allure.step("The response contains the sum of the expected values")
+    def have_sum_of_value(self, key: str, sum_value: int) -> 'Asserts':
+        """Checking the sum of values by key"""
+        response_json = get_response_as_dict(self.response)
+        response_length = len(response_json[key])
+        assert sum_value == response_length, \
+            f"Unexpected sum of values! Expected: {sum_value}. Actual: {response_length}"
         return self
