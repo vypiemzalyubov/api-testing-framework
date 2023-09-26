@@ -4,9 +4,9 @@ from enum import Enum
 
 
 class CompanyStatus(str, Enum):
-    ACTIVE = 'ACTIVE'
-    BANKRUPT = 'BANKRUPT'
-    CLOSED = 'CLOSED'
+    ACTIVE = "ACTIVE"
+    BANKRUPT = "BANKRUPT"
+    CLOSED = "CLOSED"
 
 
 class CompanyData(BaseModel):
