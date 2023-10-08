@@ -13,7 +13,8 @@ class Asserts:
         """Check the current status code of the response for compliance with the expected status code"""
         actual_status_code = self.response.status_code
         assert expected_status_code == actual_status_code, \
-            f"Unexpected status code! Expected: {expected_status_code}. Actual: {actual_status_code}"
+            f"Unexpected status code! Expected: {expected_status_code}. \
+                Actual: {actual_status_code}"
         return self
 
     @allure.step("JSON response schema is valid")
@@ -27,7 +28,7 @@ class Asserts:
             schema.model_validate(response_json)
         return self
 
-    @allure.step("The response field contains the expected value")
+    @allure.step("The response field contains the {expected_value}")
     def have_value_in_key(self, path: str, expected_value: str) -> 'Asserts':
         """Checking the value in the specified key"""
         response_json = get_response_as_dict(self.response)
@@ -35,7 +36,22 @@ class Asserts:
             path = parse(path)
             matches = [match.value for match in path.find(response_json)]
             assert all(value == expected_value for value in matches), \
-                f"Response doesn't contain the \"{expected_value}\" at the path \"{path}\""
+                f"Response doesn't contain the \"{expected_value}\" at the path \"{path}\" \
+                    Actual: {matches}"
+        except Exception as e:
+            raise AssertionError(f"JSONPath assertion failed: {e}")
+        return self
+
+    @allure.step("The response field doesn't contain the {expected_value}")
+    def have_value_not_in_key(self, path: str, expected_value: str) -> 'Asserts':
+        """Checking the absence of a value in the specified key"""
+        response_json = get_response_as_dict(self.response)
+        try:
+            path = parse(path)
+            matches = [match.value for match in path.find(response_json)]
+            assert all(value != expected_value for value in matches), \
+                f"Response contain the \"{expected_value}\" at the path \"{path}\", but must not contain it \
+                    Actual: {matches}"
         except Exception as e:
             raise AssertionError(f"JSONPath assertion failed: {e}")
         return self
@@ -46,5 +62,6 @@ class Asserts:
         response_json = get_response_as_dict(self.response)
         response_length = len(response_json[key])
         assert sum_value == response_length, \
-            f"Unexpected sum of values! Expected: {sum_value}. Actual: {response_length}"
+            f"Unexpected sum of values! Expected: {sum_value}. \
+                Actual: {response_length}"
         return self

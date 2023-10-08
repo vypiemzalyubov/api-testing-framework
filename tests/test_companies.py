@@ -61,13 +61,24 @@ class TestCompanies:
     @pytest.mark.parametrize("company_id, response_id, response_name, response_status",
                              [(1, 1, "Tesla", "ACTIVE"), (4, 4, "Nord", "BANKRUPT"), (6, 6, "BitcoinCorp", "CLOSED")])
     def test_get_companies_by_id(self, companies, company_id, response_id, response_name, response_status):
-        response = companies.companies(company_id)
+        response = companies.companies(company_id=company_id)
         Asserts(response) \
             .status_code_should_be(HTTPStatus.OK) \
             .validate_schema(Company) \
             .have_value_in_key("data[*].company_id", response_id) \
             .have_value_in_key("data[*].company_name", response_name) \
             .have_value_in_key("data[*].company_status", response_status)
+
+    @allure.title("Request with invalid arguments of the \"status\" parameter")
+    @pytest.mark.negative
+    @pytest.mark.parametrize("status",
+                             ["active", "bankrupt", "closed", "test"])
+    def test_get_companies_by_invalid_status(self, companies, status):
+        params = {"status": status}
+        response = companies.companies(params=params)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.UNPROCESSABLE_ENTITY) \
+            .have_value_in_key("detail[0].msg", "value is not a valid enumeration member; permitted: 'ACTIVE', 'BANKRUPT', 'CLOSED'")
 
     @allure.title("Request to check filtering by a limit greater than the total number of companies")
     @pytest.mark.negative
@@ -89,13 +100,23 @@ class TestCompanies:
             .status_code_should_be(HTTPStatus.OK) \
             .has_sum_of_values("data", total)
 
-    @allure.title("Request with invalid arguments of the \"status\" parameter")
+    @allure.title("Request for data by id on non-existent company")
     @pytest.mark.negative
-    @pytest.mark.parametrize("status",
-                             ["active", "bankrupt", "closed", "test"])
-    def test_get_companies_by_invalid_status(self, companies, status):
-        params = {"status": status}
-        response = companies.companies(params=params)
+    def test_get_non_existent_company_by_id(self, companies):
+        company_id = 10
+        response = companies.companies(company_id=company_id)
         Asserts(response) \
-            .status_code_should_be(HTTPStatus.UNPROCESSABLE_ENTITY) \
-            .have_value_in_key("detail[0].msg", "value is not a valid enumeration member; permitted: 'ACTIVE', 'BANKRUPT', 'CLOSED'")
+            .status_code_should_be(HTTPStatus.NOT_FOUND) \
+            .have_value_in_key("detail.reason", f"Company with requested id: {company_id} is absent")
+
+    @allure.title("Request for data on companies by id and unavailable localization")
+    @pytest.mark.negative
+    @pytest.mark.parametrize("company_id, locale",
+                             [(1, "AR"), (5, "RU"), (3, "ES")])
+    def test_get_companies_by_id_and_unavailable_localization(self, companies, company_id, locale):
+        headers = {"Accept-Language": locale}
+        response = companies.companies(company_id=company_id, headers=headers)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.OK) \
+            .validate_schema(Company) \
+            .have_value_not_in_key("description_lang[*].translation_lang", locale)
