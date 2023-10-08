@@ -1,6 +1,6 @@
 import json
 from typing import Dict, Any
-from requests import Response
+from httpx import Response
 
 
 def get_response_as_dict(response: Response) -> Dict[str, Any]:
