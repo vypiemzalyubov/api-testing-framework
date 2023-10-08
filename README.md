@@ -7,9 +7,10 @@ This project implements a framework to automate testing of the [**"Send Request"
 ## Prerequisites:
 
 [![Pytest](https://img.shields.io/badge/pytest-7.4.2-blue)](https://pypi.python.org/pypi/pytest)
-[![Requests](https://img.shields.io/badge/requests-2.31.0-blue)](https://pypi.python.org/pypi/requests)
+[![HTTPX](https://img.shields.io/badge/httpx-0.25.0-blue)](https://pypi.org/project/httpx/)
 [![Pydantic](https://img.shields.io/badge/pydantic-2.3.0-blue)](https://pypi.org/project/pydantic/)
 [![JSONPath](https://img.shields.io/badge/jsonpath--ng-1.6.0-blue)](https://pypi.org/project/jsonpath-ng/)
+[![python-dotenv](https://img.shields.io/badge/python--dotenv-1.0.0-blue)](https://pypi.org/project/python-dotenv/)
 [![pytest-xdist](https://img.shields.io/badge/pytest--xdist-3.3.1-blue)](https://pypi.org/project/pytest-xdist/)
 [![Allure Pytest](https://img.shields.io/badge/allure--pytest-2.13.2-blue)](https://pypi.python.org/pypi/allure-pytest)
 
