@@ -33,6 +33,7 @@ api-testing-framework/
 │  ├─ asserts.py
 │  ├─ logger.py
 │  ├─ parser.py
+├─ .env
 ├─ .gitignore
 ├─ README.md
 ├─ pytest.ini
