@@ -1,5 +1,6 @@
 import allure
 import pytest
+from http import HTTPStatus
 from utils.asserts import Asserts
 from utils.models.companies_model import Company
 
@@ -16,7 +17,7 @@ class TestCompanies:
     def test_get_companies_without_parameters(self, companies):
         response = companies.companies()
         Asserts(response) \
-            .status_code_should_be(200) \
+            .status_code_should_be(HTTPStatus.OK) \
             .validate_schema(Company)
 
     @allure.title("Request to check filtering by status")
@@ -27,7 +28,7 @@ class TestCompanies:
         params = {"status": status}
         response = companies.companies(params)
         Asserts(response) \
-            .status_code_should_be(200) \
+            .status_code_should_be(HTTPStatus.OK) \
             .validate_schema(Company) \
             .have_value_in_key("data[*].company_status", company_status)
 
@@ -39,20 +40,9 @@ class TestCompanies:
         params = {"limit": limit}
         response = companies.companies(params)
         Asserts(response) \
-            .status_code_should_be(200) \
+            .status_code_should_be(HTTPStatus.OK) \
             .validate_schema(Company) \
             .has_sum_of_values("data", total)
-
-    @allure.title("Request with invalid arguments of the \"status\" parameter")
-    @pytest.mark.negative
-    @pytest.mark.parametrize("status",
-                             ["active", "bankrupt", "closed", "test"])
-    def test_get_companies_by_invalid_status(self, companies, status):
-        params = {"status": status}
-        response = companies.companies(params)
-        Asserts(response) \
-            .status_code_should_be(422) \
-            .have_value_in_key("detail[0].msg", "value is not a valid enumeration member; permitted: 'ACTIVE', 'BANKRUPT', 'CLOSED'")
 
     @allure.title("Request to check filtering by a limit greater than the total number of companies")
     @pytest.mark.negative
@@ -60,7 +50,7 @@ class TestCompanies:
         params = {"limit": 8}
         response = companies.companies(params)
         Asserts(response) \
-            .status_code_should_be(200) \
+            .status_code_should_be(HTTPStatus.OK) \
             .has_sum_of_values("data", 7)
 
     @allure.title("Request to check filtering by offset greater than or equal to the total number of companies")
@@ -71,5 +61,16 @@ class TestCompanies:
         params = {"offset": offset}
         response = companies.companies(params)
         Asserts(response) \
-            .status_code_should_be(200) \
+            .status_code_should_be(HTTPStatus.OK) \
             .has_sum_of_values("data", total)
+
+    @allure.title("Request with invalid arguments of the \"status\" parameter")
+    @pytest.mark.negative
+    @pytest.mark.parametrize("status",
+                             ["active", "bankrupt", "closed", "test"])
+    def test_get_companies_by_invalid_status(self, companies, status):
+        params = {"status": status}
+        response = companies.companies(params)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.UNPROCESSABLE_ENTITY) \
+            .have_value_in_key("detail[0].msg", "value is not a valid enumeration member; permitted: 'ACTIVE', 'BANKRUPT', 'CLOSED'")
