@@ -44,6 +44,18 @@ class TestCompanies:
             .validate_schema(Company) \
             .has_sum_of_values("data", total)
 
+    @allure.title("Request to check filtering by limit and offset")
+    @pytest.mark.positive
+    @pytest.mark.parametrize("limit, offset, company_id",
+                             [(1, 4, 5), (1, 5, 6)])
+    def test_get_companies_by_limit_and_offset(self, companies, limit, offset, company_id):
+        params = {"limit": limit, "offset": offset}
+        response = companies.companies(params)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.OK) \
+            .validate_schema(Company) \
+            .have_value_in_key("data[*].company_id", company_id)
+
     @allure.title("Request to check filtering by a limit greater than the total number of companies")
     @pytest.mark.negative
     def test_get_companies_by_limit_where_limit_greather_total(self, companies):
