@@ -1,6 +1,6 @@
 import json
-from requests import Response
 from typing import Dict, Any
+from requests import Response
 
 
 def get_response_as_dict(response: Response) -> Dict[str, Any]:
@@ -9,4 +9,4 @@ def get_response_as_dict(response: Response) -> Dict[str, Any]:
         return response.json()
     except json.JSONDecodeError:
         assert False, \
-            f"Response is not JSON format. Response text is '{response.text}'"
+            f"Response is not JSON format. Response text is \"{response.text}\""
