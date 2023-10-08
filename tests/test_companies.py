@@ -12,9 +12,9 @@ pytestmark = [allure.parent_suite("sendrequest"),
 
 class TestCompanies:
 
-    @allure.title("Request for data on companies without parameters")
+    @allure.title("Request data without parameters about the list of companies")
     @pytest.mark.positive
-    def test_get_companies_without_parameters(self, companies):
+    def test_get_company_list_without_parameters(self, companies):
         response = companies.companies()
         Asserts(response) \
             .status_code_should_be(HTTPStatus.OK) \
@@ -24,7 +24,7 @@ class TestCompanies:
     @pytest.mark.positive
     @pytest.mark.parametrize("status, company_status",
                              [("ACTIVE", "ACTIVE"), ("BANKRUPT", "BANKRUPT"), ("CLOSED", "CLOSED")])
-    def test_get_companies_by_status(self, companies, status, company_status):
+    def test_get_company_list_by_status(self, companies, status, company_status):
         params = {"status": status}
         response = companies.companies(params=params)
         Asserts(response) \
@@ -36,7 +36,7 @@ class TestCompanies:
     @pytest.mark.positive
     @pytest.mark.parametrize("limit, total",
                              [(i, i) for i in range(7)])
-    def test_get_companies_by_limit(self, companies, limit, total):
+    def test_get_company_list_by_limit(self, companies, limit, total):
         params = {"limit": limit}
         response = companies.companies(params=params)
         Asserts(response) \
@@ -48,7 +48,7 @@ class TestCompanies:
     @pytest.mark.positive
     @pytest.mark.parametrize("limit, offset, company_id",
                              [(1, 4, 5), (1, 5, 6)])
-    def test_get_companies_by_limit_and_offset(self, companies, limit, offset, company_id):
+    def test_get_company_list_by_limit_and_offset(self, companies, limit, offset, company_id):
         params = {"limit": limit, "offset": offset}
         response = companies.companies(params=params)
         Asserts(response) \
@@ -56,11 +56,11 @@ class TestCompanies:
             .validate_schema(CompanyList) \
             .have_value_in_key("data[*].company_id", company_id)
 
-    @allure.title("Request for data on companies by id")
+    @allure.title("Request company data by id")
     @pytest.mark.positive
     @pytest.mark.parametrize("company_id, response_id, response_name, response_status",
                              [(1, 1, "Tesla", "ACTIVE"), (4, 4, "Nord", "BANKRUPT"), (6, 6, "BitcoinCorp", "CLOSED")])
-    def test_get_companies_by_id(self, companies, company_id, response_id, response_name, response_status):
+    def test_get_company_by_id(self, companies, company_id, response_id, response_name, response_status):
         response = companies.companies(company_id=company_id)
         Asserts(response) \
             .status_code_should_be(HTTPStatus.OK) \
@@ -73,7 +73,7 @@ class TestCompanies:
     @pytest.mark.negative
     @pytest.mark.parametrize("status",
                              ["active", "bankrupt", "closed", "test"])
-    def test_get_companies_by_invalid_status(self, companies, status):
+    def test_get_company_list_by_invalid_status(self, companies, status):
         params = {"status": status}
         response = companies.companies(params=params)
         Asserts(response) \
@@ -82,7 +82,7 @@ class TestCompanies:
 
     @allure.title("Request to check filtering by a limit greater than the total number of companies")
     @pytest.mark.negative
-    def test_get_companies_by_limit_where_limit_greather_total(self, companies):
+    def test_get_company_list_by_limit_where_limit_greather_total(self, companies):
         params = {"limit": 8}
         response = companies.companies(params=params)
         Asserts(response) \
@@ -93,7 +93,7 @@ class TestCompanies:
     @pytest.mark.negative
     @pytest.mark.parametrize("offset, total",
                              [(7, 0), (8, 0)])
-    def test_get_companies_by_offset_where_offset_greather_or_equal_total(self, companies, offset, total):
+    def test_get_company_list_by_offset_where_offset_greather_or_equal_total(self, companies, offset, total):
         params = {"offset": offset}
         response = companies.companies(params=params)
         Asserts(response) \
@@ -109,11 +109,11 @@ class TestCompanies:
             .status_code_should_be(HTTPStatus.NOT_FOUND) \
             .have_value_in_key("detail.reason", f"Company with requested id: {company_id} is absent")
 
-    @allure.title("Request for data on companies by id and unavailable localization")
+    @allure.title("Request company data by id and unavailable localization")
     @pytest.mark.negative
     @pytest.mark.parametrize("company_id, locale",
                              [(1, "AR"), (5, "RU"), (3, "ES")])
-    def test_get_companies_by_id_and_unavailable_localization(self, companies, company_id, locale):
+    def test_get_company_by_id_and_unavailable_localization(self, companies, company_id, locale):
         headers = {"Accept-Language": locale}
         response = companies.companies(company_id=company_id, headers=headers)
         Asserts(response) \
