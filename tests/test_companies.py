@@ -58,12 +58,16 @@ class TestCompanies:
 
     @allure.title("Request for data on companies by id")
     @pytest.mark.positive
-    def test_get_companies_by_id(self, companies):
-        id = str(1)
-        response = companies.companies(id)
+    @pytest.mark.parametrize("company_id, response_id, response_name, response_status",
+                             [(1, 1, "Tesla", "ACTIVE"), (4, 4, "Nord", "BANKRUPT"), (6, 6, "BitcoinCorp", "CLOSED")])
+    def test_get_companies_by_id(self, companies, company_id, response_id, response_name, response_status):
+        response = companies.companies(company_id)
         Asserts(response) \
             .status_code_should_be(HTTPStatus.OK) \
-            .validate_schema(Company)
+            .validate_schema(Company) \
+            .have_value_in_key("data[*].company_id", response_id) \
+            .have_value_in_key("data[*].company_name", response_name) \
+            .have_value_in_key("data[*].company_status", response_status)
 
     @allure.title("Request to check filtering by a limit greater than the total number of companies")
     @pytest.mark.negative
