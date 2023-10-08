@@ -7,5 +7,5 @@ class CompaniesApi(ApiClient):
     _ENDPOINT = "/api/companies/"
 
     @allure.step('Request to API /companies/')
-    def companies(self, params: dict = None, headers: dict = None):
-        return self.get(endpoint=self._ENDPOINT, params=params, headers=headers)
+    def companies(self, company_id: str = "", params: dict = None, headers: dict = None):
+        return self.get(endpoint=f"{self._ENDPOINT}{company_id}", params=params, headers=headers)

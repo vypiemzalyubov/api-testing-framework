@@ -1,6 +1,6 @@
-from pydantic import BaseModel
 from typing import List
 from enum import Enum
+from pydantic import BaseModel
 
 
 class CompanyStatus(str, Enum):
@@ -22,6 +22,15 @@ class MetaData(BaseModel):
     total: int
 
 
-class Company(BaseModel):
+class CompanyList(BaseModel):
     data: List[CompanyData]
     meta: MetaData
+
+
+class DescriptionLang(BaseModel):
+    translation_lang: str
+    translation: str
+
+
+class Company(CompanyData):
+    description_lang: List[DescriptionLang]

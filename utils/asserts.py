@@ -1,5 +1,4 @@
 import allure
-from pydantic import ValidationError
 from jsonpath_ng import parse
 from utils.parser import get_response_as_dict
 
@@ -23,15 +22,9 @@ class Asserts:
         response_json = get_response_as_dict(self.response)
         if isinstance(response_json, list):
             for item in response_json:
-                try:
-                    schema.model_validate(item)
-                except ValidationError as e:
-                    raise AssertionError(f"JSON schema validation failed for item: {e}")
+                schema.model_validate(item)
         else:
-            try:
-                schema.model_validate(response_json)
-            except ValidationError as e:
-                raise AssertionError(f"JSON schema validation failed: {e}")
+            schema.model_validate(response_json)
         return self
 
     @allure.step("The response field contains the expected value")
