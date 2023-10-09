@@ -2,8 +2,8 @@ import allure
 import pytest
 from http import HTTPStatus
 from utils.asserts import Asserts
-from utils.models.companies_model import Company, CompanyList
 from utils.data.load_data import get_translation
+from utils.models.companies_model import Company, CompanyList
 
 
 pytest_plugins = ["fixtures.companies_api_fixture"]
