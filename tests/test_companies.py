@@ -3,6 +3,7 @@ import pytest
 from http import HTTPStatus
 from utils.asserts import Asserts
 from utils.models.companies_model import Company, CompanyList
+from utils.data.load_data import get_translation
 
 
 pytest_plugins = ["fixtures.companies_api_fixture"]
@@ -68,6 +69,24 @@ class TestCompanies:
             .have_value_in_key("data[*].company_id", response_id) \
             .have_value_in_key("data[*].company_name", response_name) \
             .have_value_in_key("data[*].company_status", response_status)
+
+    @allure.title("Request company data by id and unavailable localization")
+    @pytest.mark.negative
+    @pytest.mark.parametrize(
+        "company_id, locale, response_translation",
+        [
+            pytest.param(3, "RU", get_translation("RU"), id="translation RU"),
+            pytest.param(1, "EN", get_translation("EN"), id="translation EN"),
+            pytest.param(1, "PL", get_translation("PL"), id="translation PL")
+        ]
+    )
+    def test_get_company_by_id_and_localization(self, companies, company_id, locale, response_translation):
+        headers = {"Accept-Language": locale}
+        response = companies.companies(company_id=company_id, headers=headers)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.OK) \
+            .validate_schema(Company) \
+            .have_value_in_key("description", response_translation)
 
     @allure.title("Request with invalid arguments of the \"status\" parameter")
     @pytest.mark.negative

@@ -13,8 +13,8 @@ class Asserts:
         """Check the current status code of the response for compliance with the expected status code"""
         actual_status_code = self.response.status_code
         assert expected_status_code == actual_status_code, \
-            f"Unexpected status code! Expected: {expected_status_code}. \
-                Actual: {actual_status_code}"
+            f"Unexpected status code! Expected: {expected_status_code}. " \
+                f"Actual: {actual_status_code}"
         return self
 
     @allure.step("JSON response schema is valid")
@@ -35,9 +35,9 @@ class Asserts:
         try:
             path = parse(path)
             matches = [match.value for match in path.find(response_json)]
-            assert all(value == expected_value for value in matches), \
-                f"Response doesn't contain the \"{expected_value}\" at the path \"{path}\" \
-                    Actual: {matches}"
+            assert all(expected_value == value for value in matches), \
+                f"Response doesn't contain the \"{expected_value}\" at the path \"{path}\" " \
+                    f"Actual: {matches}"
         except Exception as e:
             raise AssertionError(f"JSONPath assertion failed: {e}")
         return self
@@ -49,9 +49,9 @@ class Asserts:
         try:
             path = parse(path)
             matches = [match.value for match in path.find(response_json)]
-            assert all(value != expected_value for value in matches), \
-                f"Response contain the \"{expected_value}\" at the path \"{path}\", but must not contain it \
-                    Actual: {matches}"
+            assert all(expected_value != value for value in matches), \
+                f"Response contain the \"{expected_value}\" at the path \"{path}\", but must not contain it. " \
+                    f"Actual: {matches}"
         except Exception as e:
             raise AssertionError(f"JSONPath assertion failed: {e}")
         return self
@@ -62,6 +62,6 @@ class Asserts:
         response_json = get_response_as_dict(self.response)
         response_length = len(response_json[key])
         assert sum_value == response_length, \
-            f"Unexpected sum of values! Expected: {sum_value}. \
-                Actual: {response_length}"
+            f"Unexpected sum of values! Expected: {sum_value}. " \
+                f"Actual: {response_length}"
         return self
