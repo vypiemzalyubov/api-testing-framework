@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 from enum import Enum
 from pydantic import BaseModel
 
@@ -33,5 +33,5 @@ class DescriptionLang(BaseModel):
 
 
 class Company(CompanyData):
-    description_lang: Optional[List[DescriptionLang]] = None
-    description: Optional[str] = None
+    description_lang: List[DescriptionLang] | None = None
+    description: str | None = None
