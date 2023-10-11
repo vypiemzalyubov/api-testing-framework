@@ -1,4 +1,5 @@
 import allure
+from httpx import Response
 from api.api_client import ApiClient
 from api.routes import ApiRoutes
 
@@ -6,9 +7,11 @@ from api.routes import ApiRoutes
 class CompaniesApi(ApiClient):
 
     @allure.step("Getting all companies")
-    def get_companies(self, params: dict = None, headers: dict = None):
-        return self.get(endpoint=f"{ApiRoutes.COMPANIES}/", params=params, headers=headers)
+    def get_companies(self, params: dict = None) -> Response:
+        return self.get(endpoint=f"{ApiRoutes.COMPANIES}/", 
+                        params=params)
 
     @allure.step("Getting company with id {company_id}")
-    def get_company(self, company_id: int, headers: dict = None):
-        return self.get(endpoint=f"{ApiRoutes.COMPANIES}/{company_id}", headers=headers)
+    def get_company(self, company_id: int, headers: dict = None) -> Response:
+        return self.get(endpoint=f"{ApiRoutes.COMPANIES}/{company_id}", 
+                        headers=headers)
