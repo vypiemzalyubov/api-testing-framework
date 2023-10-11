@@ -13,7 +13,7 @@ class ApiClient(Client):
     _BASE_URL = os.getenv("BASE_URL")
     _TIMEOUT = 10
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.response = None
 
     @allure.step("Sending a GET request")

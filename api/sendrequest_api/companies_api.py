@@ -1,11 +1,14 @@
 import allure
 from api.api_client import ApiClient
+from api.routes import ApiRoutes
 
 
 class CompaniesApi(ApiClient):
 
-    _ENDPOINT = "/api/companies/"
+    @allure.step("Getting all companies")
+    def get_companies(self, params: dict = None, headers: dict = None):
+        return self.get(endpoint=f"{ApiRoutes.COMPANIES}/", params=params, headers=headers)
 
-    @allure.step("Request to API /companies/")
-    def companies(self, company_id: int = "", params: dict = None, headers: dict = None):
-        return self.get(endpoint=f"{self._ENDPOINT}{company_id}", params=params, headers=headers)
+    @allure.step("Getting company with id {company_id}")
+    def get_company(self, company_id: int, headers: dict = None):
+        return self.get(endpoint=f"{ApiRoutes.COMPANIES}/{company_id}", headers=headers)

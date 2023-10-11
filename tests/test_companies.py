@@ -16,7 +16,7 @@ class TestCompanies:
     @allure.title("Request data without parameters about the list of companies")
     @pytest.mark.positive
     def test_get_company_list_without_parameters(self, companies):
-        response = companies.companies()
+        response = companies.get_companies()
         Asserts(response) \
             .status_code_should_be(HTTPStatus.OK) \
             .validate_schema(CompanyList)
@@ -27,7 +27,7 @@ class TestCompanies:
                              [("ACTIVE", "ACTIVE"), ("BANKRUPT", "BANKRUPT"), ("CLOSED", "CLOSED")])
     def test_get_company_list_by_status(self, companies, status, company_status):
         params = {"status": status}
-        response = companies.companies(params=params)
+        response = companies.get_companies(params)
         Asserts(response) \
             .status_code_should_be(HTTPStatus.OK) \
             .validate_schema(CompanyList) \
@@ -39,7 +39,7 @@ class TestCompanies:
                              [(i, i) for i in range(7)])
     def test_get_company_list_by_limit(self, companies, limit, total):
         params = {"limit": limit}
-        response = companies.companies(params=params)
+        response = companies.get_companies(params)
         Asserts(response) \
             .status_code_should_be(HTTPStatus.OK) \
             .validate_schema(CompanyList) \
@@ -51,7 +51,7 @@ class TestCompanies:
                              [(1, 4, 5), (1, 5, 6)])
     def test_get_company_list_by_limit_and_offset(self, companies, limit, offset, company_id):
         params = {"limit": limit, "offset": offset}
-        response = companies.companies(params=params)
+        response = companies.get_companies(params)
         Asserts(response) \
             .status_code_should_be(HTTPStatus.OK) \
             .validate_schema(CompanyList) \
@@ -62,7 +62,7 @@ class TestCompanies:
     @pytest.mark.parametrize("company_id, response_id, response_name, response_status",
                              [(1, 1, "Tesla", "ACTIVE"), (4, 4, "Nord", "BANKRUPT"), (6, 6, "BitcoinCorp", "CLOSED")])
     def test_get_company_by_id(self, companies, company_id, response_id, response_name, response_status):
-        response = companies.companies(company_id=company_id)
+        response = companies.get_company(company_id)
         Asserts(response) \
             .status_code_should_be(HTTPStatus.OK) \
             .validate_schema(Company) \
@@ -73,16 +73,18 @@ class TestCompanies:
     @allure.title("Request company data by id and unavailable localization")
     @pytest.mark.negative
     @pytest.mark.parametrize(
-        "company_id, locale, response_translation",
+        "company_id, headers, response_translation",
         [
-            pytest.param(3, "RU", get_translation("RU"), id="translation RU"),
-            pytest.param(1, "EN", get_translation("EN"), id="translation EN"),
-            pytest.param(1, "PL", get_translation("PL"), id="translation PL")
+            pytest.param(3, {"Accept-Language": "RU"},
+                         get_translation("RU"), id="translation RU"),
+            pytest.param(1, {"Accept-Language": "EN"},
+                         get_translation("EN"), id="translation EN"),
+            pytest.param(1, {"Accept-Language": "PL"},
+                         get_translation("PL"), id="translation PL")
         ]
     )
-    def test_get_company_by_id_and_localization(self, companies, company_id, locale, response_translation):
-        headers = {"Accept-Language": locale}
-        response = companies.companies(company_id=company_id, headers=headers)
+    def test_get_company_by_id_and_localization(self, companies, company_id, headers, response_translation):
+        response = companies.get_company(company_id, headers)
         Asserts(response) \
             .status_code_should_be(HTTPStatus.OK) \
             .validate_schema(Company) \
@@ -94,7 +96,7 @@ class TestCompanies:
                              ["active", "bankrupt", "closed", "test"])
     def test_get_company_list_by_invalid_status(self, companies, status):
         params = {"status": status}
-        response = companies.companies(params=params)
+        response = companies.get_companies(params)
         Asserts(response) \
             .status_code_should_be(HTTPStatus.UNPROCESSABLE_ENTITY) \
             .have_value_in_key("detail[0].msg", "value is not a valid enumeration member; permitted: 'ACTIVE', 'BANKRUPT', 'CLOSED'")
@@ -103,7 +105,7 @@ class TestCompanies:
     @pytest.mark.negative
     def test_get_company_list_by_limit_where_limit_greather_total(self, companies):
         params = {"limit": 8}
-        response = companies.companies(params=params)
+        response = companies.get_companies(params)
         Asserts(response) \
             .status_code_should_be(HTTPStatus.OK) \
             .has_sum_of_values("data", 7)
@@ -114,7 +116,7 @@ class TestCompanies:
                              [(7, 0), (8, 0)])
     def test_get_company_list_by_offset_where_offset_greather_or_equal_total(self, companies, offset, total):
         params = {"offset": offset}
-        response = companies.companies(params=params)
+        response = companies.get_companies(params)
         Asserts(response) \
             .status_code_should_be(HTTPStatus.OK) \
             .has_sum_of_values("data", total)
@@ -122,20 +124,24 @@ class TestCompanies:
     @allure.title("Request for data by id on non-existent company")
     @pytest.mark.negative
     def test_get_non_existent_company_by_id(self, companies):
-        company_id = 10
-        response = companies.companies(company_id=company_id)
+        response = companies.get_company(10)
         Asserts(response) \
             .status_code_should_be(HTTPStatus.NOT_FOUND) \
-            .have_value_in_key("detail.reason", f"Company with requested id: {company_id} is absent")
+            .have_value_in_key("detail.reason", "Company with requested id: 10 is absent")
 
     @allure.title("Request company data by id and unavailable localization")
     @pytest.mark.negative
-    @pytest.mark.parametrize("company_id, locale",
-                             [(1, "AR"), (5, "RU"), (3, "ES")])
-    def test_get_company_by_id_and_unavailable_localization(self, companies, company_id, locale):
-        headers = {"Accept-Language": locale}
-        response = companies.companies(company_id=company_id, headers=headers)
+    @pytest.mark.parametrize(
+        "company_id, headers, response_locale",
+        [
+            (1, {"Accept-Language": "AR"}, "AR"),
+            (5, {"Accept-Language": "RU"}, "RU"),
+            (3, {"Accept-Language": "ES"}, "ES")
+        ]
+    )
+    def test_get_company_by_id_and_unavailable_localization(self, companies, company_id, headers, response_locale):
+        response = companies.get_company(company_id, headers)
         Asserts(response) \
             .status_code_should_be(HTTPStatus.OK) \
             .validate_schema(Company) \
-            .have_value_not_in_key("description_lang[*].translation_lang", locale)
+            .have_value_not_in_key("description_lang[*].translation_lang", response_locale)

@@ -16,7 +16,7 @@ class TestCompanies:
     @allure.title("Request data without parameters about the list of users")
     @pytest.mark.positive
     def test_get_user_list_without_parameters(self, users):
-        response = users.users()
+        response = users.get_users()
         Asserts(response) \
             .status_code_should_be(HTTPStatus.OK) \
             .validate_schema(UserList)
