@@ -6,7 +6,7 @@ from utils.data.load_data import get_translation
 from utils.models.companies_model import Company, CompanyList
 
 
-pytest_plugins = ["fixtures.companies_api_fixture"]
+pytest_plugins = ["fixtures.companies_fixture"]
 pytestmark = [allure.parent_suite("sendrequest"),
               allure.suite("companies")]
 

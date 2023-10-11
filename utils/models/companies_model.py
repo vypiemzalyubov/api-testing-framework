@@ -9,6 +9,12 @@ class CompanyStatus(str, Enum):
     CLOSED = "CLOSED"
 
 
+class MetaData(BaseModel):
+    limit: int
+    offset: int
+    total: int
+
+
 class CompanyData(BaseModel):
     company_id: int
     company_name: str
@@ -16,20 +22,14 @@ class CompanyData(BaseModel):
     company_status: CompanyStatus
 
 
-class MetaData(BaseModel):
-    limit: int
-    offset: int
-    total: int
+class DescriptionLang(BaseModel):
+    translation_lang: str
+    translation: str
 
 
 class CompanyList(BaseModel):
     data: List[CompanyData]
     meta: MetaData
-
-
-class DescriptionLang(BaseModel):
-    translation_lang: str
-    translation: str
 
 
 class Company(CompanyData):
