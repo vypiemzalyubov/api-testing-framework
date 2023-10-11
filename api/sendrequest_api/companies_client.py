@@ -4,7 +4,7 @@ from api.api_client import ApiClient
 from api.routes import ApiRoutes
 
 
-class CompaniesApi(ApiClient):
+class CompaniesClient(ApiClient):
 
     @allure.step("Getting all companies")
     def get_companies(self, params: dict = None) -> Response:

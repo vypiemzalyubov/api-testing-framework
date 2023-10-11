@@ -4,7 +4,7 @@ from api.api_client import ApiClient
 from api.routes import ApiRoutes
 
 
-class UsersApi(ApiClient):
+class UsersClient(ApiClient):
 
     @allure.step("Getting all users")
     def get_users(self, params: dict = None, headers: dict = None) -> Response:
