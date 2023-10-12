@@ -1,53 +1,50 @@
 import os
 import allure
-import httpx
 from httpx import Client, Response
 from dotenv import load_dotenv
 from utils.logger import log
+
 
 load_dotenv()
 
 
 class ApiClient(Client):
 
-    _BASE_URL = os.getenv("BASE_URL")
-
     def __init__(self) -> None:
-        self.client = httpx.Client()
-        self.response = None
+        super().__init__(base_url=os.getenv("BASE_URL"))
 
-    @allure.step(f"Sending a GET request to \"{_BASE_URL}\"")
+    @allure.step(f"Sending a GET request to \"{Client.base_url}\"")
     def get(self, endpoint: str, params: dict = None, headers: dict = None, timeout: int = None) -> Response:
-        self.response = self.client.get(url=f"{self._BASE_URL}{endpoint}",
+        self.response = super().get(url=endpoint,
                                     params=params,
                                     headers=headers,
                                     timeout=timeout)
         log(response=self.response)
         return self.response
 
-    @allure.step(f"Sending a POST request to \"{_BASE_URL}\"")
+    @allure.step(f"Sending a POST request to \"{Client.base_url}\"")
     def post(self, endpoint: str, data: dict = None, headers: dict = None, timeout: int = None) -> Response:
-        self.response = self.client.post(url=f"{self._BASE_URL}{endpoint}",
-                                    json=data,
-                                    headers=headers,
-                                    timeout=timeout)
+        self.response = super().post(url=endpoint,
+                                     json=data,
+                                     headers=headers,
+                                     timeout=timeout)
         log(response=self.response, request_body=data)
         return self.response
 
-    @allure.step(f"Sending a PUT request to \"{_BASE_URL}\"")
+    @allure.step(f"Sending a PUT request to \"{Client.base_url}\"")
     def put(self, endpoint: str, data: dict = None, headers: dict = None, timeout: int = None) -> Response:
-        self.response = self.client.put(url=f"{self._BASE_URL}{endpoint}",
+        self.response = super().put(url=endpoint,
                                     json=data,
                                     headers=headers,
                                     timeout=timeout)
         log(response=self.response, request_body=data)
         return self.response
 
-    @allure.step(f"Sending a DELETE request to \"{_BASE_URL}\"")
+    @allure.step(f"Sending a DELETE request to \"{Client.base_url}\"")
     def delete(self, endpoint: str, params: str = None, headers: dict = None, timeout: int = None) -> Response:
-        self.response = self.client.get(url=f"{self._BASE_URL}{endpoint}",
-                                    params=params,
-                                    headers=headers,
-                                    timeout=timeout)
+        self.response = super().delete(url=endpoint,
+                                       params=params,
+                                       headers=headers,
+                                       timeout=timeout)
         log(response=self.response)
         return self.response
