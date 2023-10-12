@@ -16,50 +16,42 @@ class ApiClient(Client):
     def __init__(self) -> None:
         self.response = None
 
-    @allure.step("Sending a GET request")
+    # @allure.step("Sending a GET request to \"{self._BASE_URL}\"")
     def get(self, endpoint: str, params: dict = None, headers: dict = None) -> Response:
-        with allure.step(f"GET request for url: {self._BASE_URL}{endpoint}\n"
-                         f"Request parameters: {params}"):
-            with httpx.Client() as client:
-                self.response = client.get(url=f"{self._BASE_URL}{endpoint}",
-                                           params=params,
-                                           headers=headers,
-                                           timeout=self._TIMEOUT)
+        with httpx.Client() as client:
+            self.response = client.get(url=f"{self._BASE_URL}{endpoint}",
+                                       params=params,
+                                       headers=headers,
+                                       timeout=self._TIMEOUT)
         log(response=self.response)
         return self.response
 
-    @allure.step("Sending a POST request")
-    def post(self, url: str, endpoint: str, data: dict = None, headers: dict = None) -> Response:
-        with allure.step(f"POST request for url: {url}{endpoint}\n"
-                         f"Request body: \n {data}"):
-            with httpx.Client() as client:
-                self.response = client.post(url=f"{url}{endpoint}",
-                                            json=data,
-                                            headers=headers,
-                                            timeout=self._TIMEOUT)
+    # @allure.step("Sending a POST request to \"{self._BASE_URL}\"")
+    def post(self, endpoint: str, data: dict = None, headers: dict = None) -> Response:
+        with httpx.Client() as client:
+            self.response = client.post(url=f"{self._BASE_URL}{endpoint}",
+                                        json=data,
+                                        headers=headers,
+                                        timeout=self._TIMEOUT)
         log(response=self.response, request_body=data)
         return self.response
 
-    @allure.step("Sending a PUT request")
-    def put(self, url: str, endpoint: str, data: dict = None, headers: dict = None) -> Response:
-        with allure.step(f"PUT request for url: {url}{endpoint}\n"
-                         f"Request body: \n {data}"):
-            with httpx.Client() as client:
-                self.response = client.put(url=f"{url}{endpoint}",
-                                           json=data,
-                                           headers=headers,
-                                           timeout=self._TIMEOUT)
+    # @allure.step("Sending a PUT request to \"{self._BASE_URL}\"")
+    def put(self, endpoint: str, data: dict = None, headers: dict = None) -> Response:
+        with httpx.Client() as client:
+            self.response = client.put(url=f"{self._BASE_URL}{endpoint}",
+                                       json=data,
+                                       headers=headers,
+                                       timeout=self._TIMEOUT)
         log(response=self.response, request_body=data)
         return self.response
 
-    @allure.step("Sending a DELETE request")
-    def delete(self, url: str, endpoint: str, params: str = None, headers: dict = None) -> Response:
-        with allure.step(f"DELETE request for url: {url}{endpoint}\n"
-                         f"Request parameters: {params}"):
-            with httpx.Client() as client:
-                self.response = client.get(url=f"{url}{endpoint}",
-                                           params=params,
-                                           headers=headers,
-                                           timeout=self._TIMEOUT)
+    # @allure.step("Sending a DELETE request to \"{self._BASE_URL}\"")
+    def delete(self, endpoint: str, params: str = None, headers: dict = None) -> Response:
+        with httpx.Client() as client:
+            self.response = client.get(url=f"{self._BASE_URL}{endpoint}",
+                                       params=params,
+                                       headers=headers,
+                                       timeout=self._TIMEOUT)
         log(response=self.response)
         return self.response
