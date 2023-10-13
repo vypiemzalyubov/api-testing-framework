@@ -59,7 +59,6 @@ class UsersPositive:
     def test_create_user_without_company(self, users):
         payload = {"first_name": "vypiem2", "last_name": "za_lyubov2"}
         response = users.create_user(payload)
-
         Asserts(response) \
             .status_code_should_be(HTTPStatus.CREATED) \
             .validate_schema(User) \
