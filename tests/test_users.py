@@ -59,7 +59,7 @@ class UsersPositive:
     def test_create_user_without_company(self, users):
         payload = {"first_name": "vypiem2", "last_name": "za_lyubov2"}
         response = users.create_user(payload)
-        
+
         Asserts(response) \
             .status_code_should_be(HTTPStatus.CREATED) \
             .validate_schema(User) \
@@ -108,3 +108,21 @@ class UsersNegative:
             .status_code_should_be(HTTPStatus.UNPROCESSABLE_ENTITY) \
             .have_value_in_key("detail[0].loc[0].body", "last_name") \
             .have_value_in_key("detail[0].msg", "field required")
+
+    @allure.title("Request to check the creation of a user with an inactive company")
+    @pytest.mark.parametrize(
+        "company_id",
+        [
+            pytest.param(4, id="Nord BANKRUPT"),
+            pytest.param(5, id="Apple CLOSED"),
+            pytest.param(6, id="BitcoinCorp CLOSED"),
+            pytest.param(7, id="Xiaomi BANKRUPT")
+        ]
+    )
+    def test_create_user_with_inactive_company(self, users, company_id):
+        payload = {"first_name": "vypiem_test",
+                   "last_name": "za_lyubov_test", "company_id": company_id}
+        response = users.create_user(payload)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.BAD_REQUEST) \
+            .have_value_in_key("detail.reason", f"User could not be assigned to company with id: {company_id}. Because it is not active")
