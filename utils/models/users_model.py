@@ -18,3 +18,9 @@ class UserData(BaseModel):
 class UserList(BaseModel):
     data: List[UserData]
     meta: MetaData
+
+
+class User(BaseModel):
+    first_name: str
+    last_name: str
+    company_id: int | None = None

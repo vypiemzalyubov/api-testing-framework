@@ -13,9 +13,9 @@ class UsersClient(ApiClient):
                         headers=headers)
 
     @allure.step("Creating user")
-    def create_user(self, data: dict, headers: dict = None) -> Response:
+    def create_user(self, payload: dict, headers: dict = None) -> Response:
         return self.post(endpoint=f"{ApiRoutes.USERS}/",
-                         json=data,
+                         json=payload,
                          headers=headers)
 
     @allure.step("Getting user with id {user_id}")

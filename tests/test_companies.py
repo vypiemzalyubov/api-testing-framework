@@ -2,7 +2,7 @@ import allure
 import pytest
 from http import HTTPStatus
 from utils.asserts import Asserts
-from utils.data.load_data import get_translation
+from utils.data.load import get_translation
 from utils.models.companies_model import Company, CompanyList
 
 
