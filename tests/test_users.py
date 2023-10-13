@@ -55,7 +55,7 @@ class UsersPositive:
             .have_value_in_key("last_name", "za_lyubov1") \
             .have_value_in_key("company_id", 1)
 
-    @allure.title("Request to check the creation of a user without a company")
+    @allure.title("Request to check the creation of a user without a \"company_id\"")
     def test_create_user_without_company(self, users):
         payload = {"first_name": "vypiem2", "last_name": "za_lyubov2"}
         response = users.create_user(payload)
@@ -65,6 +65,17 @@ class UsersPositive:
             .validate_schema(User) \
             .have_value_in_key("first_name", "vypiem2") \
             .have_value_in_key("last_name", "za_lyubov2") \
+            .have_value_in_key("company_id", None)
+
+    @allure.title("Request to check the creation of a user without a \"first_name\"")
+    def test_create_user_without_first_name(self, users):
+        payload = {"last_name": "za_lyubov3"}
+        response = users.create_user(payload)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.CREATED) \
+            .validate_schema(User) \
+            .have_value_in_key("last_name", "za_lyubov3") \
+            .have_value_in_key("first_name", None) \
             .have_value_in_key("company_id", None)
 
 
@@ -88,3 +99,12 @@ class UsersNegative:
             .status_code_should_be(HTTPStatus.OK) \
             .validate_schema(UserList) \
             .has_sum_of_values("data", 0)
+
+    @allure.title("Request to check the creation of a user without a required parameter \"last_name\"")
+    def test_create_user_without_required_parameter_last_name(self, users):
+        payload = {"first_name": "vypiem_test"}
+        response = users.create_user(payload)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.UNPROCESSABLE_ENTITY) \
+            .have_value_in_key("detail[0].loc[0].body", "last_name") \
+            .have_value_in_key("detail[0].msg", "field required")
