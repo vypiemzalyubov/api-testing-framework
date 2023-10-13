@@ -59,12 +59,13 @@ class UsersPositive:
     def test_create_user_without_company(self, users):
         payload = {"first_name": "vypiem2", "last_name": "za_lyubov2"}
         response = users.create_user(payload)
+        
         Asserts(response) \
             .status_code_should_be(HTTPStatus.CREATED) \
             .validate_schema(User) \
             .have_value_in_key("first_name", "vypiem2") \
             .have_value_in_key("last_name", "za_lyubov2") \
-            .have_value_in_key("company_id", 1)
+            .have_value_in_key("company_id", None)
 
 
 @pytest.mark.negative
