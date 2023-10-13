@@ -12,7 +12,7 @@ pytestmark = [allure.parent_suite("sendrequest"),
 
 
 @pytest.mark.positive
-class TestUsersPositive:
+class UsersPositive:
 
     @allure.title("Request data without parameters about the list of users")
     def test_get_user_list_without_parameters(self, users):
@@ -42,3 +42,8 @@ class TestUsersPositive:
             .status_code_should_be(HTTPStatus.OK) \
             .validate_schema(UserList) \
             .have_value_in_key("data[*].user_id", user_id)
+        
+
+@pytest.mark.negative
+class UsersNegative:
+    pass

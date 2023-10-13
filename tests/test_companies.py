@@ -12,7 +12,7 @@ pytestmark = [allure.parent_suite("sendrequest"),
 
 
 @pytest.mark.positive
-class TestCompaniesPositive:
+class CompaniesPositive:
 
     @allure.title("Request data without parameters about the list of companies")
     def test_get_company_list_without_parameters(self, companies):
@@ -68,7 +68,7 @@ class TestCompaniesPositive:
 
 
 @pytest.mark.negative
-class TestCompaniesNegative:
+class CompaniesNegative:
 
     @allure.title("Request company data by id and unavailable localization")
     @pytest.mark.parametrize(
