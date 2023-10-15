@@ -185,7 +185,7 @@ class UsersNegative:
             .status_code_should_be(HTTPStatus.NOT_FOUND) \
             .have_value_in_key("detail.reason", f"User with requested id: {user_id} is absent")
 
-    @allure.title("Request to check user without required parameter \"user_id\"")
+    @allure.title("Request to check the getting of a user without a required parameter \"user_id\"")
     def test_get_user_without_user_id(self, users):
         response = users.get_user()
         Asserts(response) \
