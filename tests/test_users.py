@@ -44,7 +44,7 @@ class UsersPositive:
             .have_value_in_key("data[*].user_id", user_id)
 
     @allure.title("Request to check the creation of a user with a company")
-    def test_create_user_with_company(self, users):
+    def test_create_user_with_company_id(self, users):
         payload = {"first_name": "vypiem1",
                    "last_name": "za_lyubov1", "company_id": 1}
         response = users.create_user(payload)
@@ -56,7 +56,7 @@ class UsersPositive:
             .have_value_in_key("company_id", 1)
 
     @allure.title("Request to check the creation of a user without a \"company_id\"")
-    def test_create_user_without_company(self, users):
+    def test_create_user_without_company_id(self, users):
         payload = {"first_name": "vypiem2", "last_name": "za_lyubov2"}
         response = users.create_user(payload)
         Asserts(response) \
@@ -68,12 +68,23 @@ class UsersPositive:
 
     @allure.title("Request to check the creation of a user without a \"first_name\"")
     def test_create_user_without_first_name(self, users):
-        payload = {"last_name": "za_lyubov3"}
+        payload = {"last_name": "za_lyubov3", "company_id": 2}
         response = users.create_user(payload)
         Asserts(response) \
             .status_code_should_be(HTTPStatus.CREATED) \
             .validate_schema(User) \
             .have_value_in_key("last_name", "za_lyubov3") \
+            .have_value_in_key("company_id", 2) \
+            .have_value_in_key("first_name", None)
+
+    @allure.title("Request to check the creation of a user without a \"first_name\" and \"company_id\"")
+    def test_create_user_without_first_name_and_company_id(self, users):
+        payload = {"last_name": "za_lyubov4"}
+        response = users.create_user(payload)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.CREATED) \
+            .validate_schema(User) \
+            .have_value_in_key("last_name", "za_lyubov4") \
             .have_value_in_key("first_name", None) \
             .have_value_in_key("company_id", None)
 
