@@ -108,7 +108,7 @@ class UsersPositive:
 
     @allure.title("Request to check user creation and retrieve the created user")
     def test_creation_and_getting_created_user(self, users):
-        # USER CREATION
+        # CREATING USER
         payload = {"first_name": "Roque", "last_name": "Santa Cruz"}
         user_creation = users.create_user(payload)
         Asserts(user_creation) \
@@ -149,7 +149,7 @@ class UsersPositive:
 
     @allure.title("Request to check user creation, updating and retrieve the updated user")
     def test_creation_updating_and_getting_updated_user(self, users):
-        # USER CREATION
+        # CREATING USER
         payload = {"first_name": "Alan",
                    "last_name": "Turing", "company_id": 1}
         user_creation = users.create_user(payload)
