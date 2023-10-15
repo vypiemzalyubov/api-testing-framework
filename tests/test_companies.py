@@ -2,7 +2,7 @@ import allure
 import pytest
 from http import HTTPStatus
 from utils.asserts import Asserts
-from utils.data.load import get_translation
+from utils.data.load import load_data
 from utils.models.companies_model import Company, CompanyList
 
 
@@ -55,8 +55,14 @@ class CompaniesPositive:
             .have_value_in_key("data[*].company_id", company_id)
 
     @allure.title("Request company data by id")
-    @pytest.mark.parametrize("company_id, response_id, response_name, response_status",
-                             [(1, 1, "Tesla", "ACTIVE"), (4, 4, "Nord", "BANKRUPT"), (6, 6, "BitcoinCorp", "CLOSED")])
+    @pytest.mark.parametrize(
+        "company_id, response_id, response_name, response_status",
+        [
+            (1, 1, "Tesla", "ACTIVE"),
+            (4, 4, "Nord", "BANKRUPT"),
+            (6, 6, "BitcoinCorp", "CLOSED")
+        ]
+    )
     def test_get_company_by_id(self, companies, company_id, response_id, response_name, response_status):
         response = companies.get_company(company_id)
         Asserts(response) \
@@ -66,20 +72,16 @@ class CompaniesPositive:
             .have_value_in_key("data[*].company_name", response_name) \
             .have_value_in_key("data[*].company_status", response_status)
 
-
-@pytest.mark.negative
-class CompaniesNegative:
-
-    @allure.title("Request company data by id and unavailable localization")
+    @allure.title("Request company data by id and available localization")
     @pytest.mark.parametrize(
         "company_id, headers, response_translation",
         [
             pytest.param(3, {"Accept-Language": "RU"},
-                         get_translation("RU"), id="translation RU"),
+                         load_data.load_translation("RU"), id="translation RU"),
             pytest.param(1, {"Accept-Language": "EN"},
-                         get_translation("EN"), id="translation EN"),
+                         load_data.load_translation("EN"), id="translation EN"),
             pytest.param(1, {"Accept-Language": "PL"},
-                         get_translation("PL"), id="translation PL")
+                         load_data.load_translation("PL"), id="translation PL")
         ]
     )
     def test_get_company_by_id_and_localization(self, companies, company_id, headers, response_translation):
@@ -88,6 +90,10 @@ class CompaniesNegative:
             .status_code_should_be(HTTPStatus.OK) \
             .validate_schema(Company) \
             .have_value_in_key("description", response_translation)
+
+
+@pytest.mark.negative
+class CompaniesNegative:
 
     @allure.title("Request with invalid arguments of the \"status\" parameter")
     @pytest.mark.parametrize("status",

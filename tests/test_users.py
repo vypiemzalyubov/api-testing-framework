@@ -2,7 +2,7 @@ import allure
 import pytest
 from http import HTTPStatus
 from utils.asserts import Asserts
-from utils.data.load import get_translation
+from utils.data.load import load_data
 from utils.models.users_model import User, UserList
 
 
@@ -88,6 +88,45 @@ class UsersPositive:
             .have_value_in_key("first_name", None) \
             .have_value_in_key("company_id", None)
 
+    @allure.title("Request to check user data by id")
+    @pytest.mark.parametrize(
+        "user_id, first_name, last_name, company_id",
+        [
+            (29175, None, "za_lyubov4", None),
+            (68, "Diana", "Donovan", 2),
+            (101, "Ne ny eto odnoznachno", "BAGGGGGGGG", 1)
+        ]
+    )
+    def test_get_user_by_id(self, users, user_id, first_name, last_name, company_id):
+        response = users.get_user(user_id)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.OK) \
+            .validate_schema(User) \
+            .have_value_in_key("first_name", first_name) \
+            .have_value_in_key("last_name", last_name) \
+            .have_value_in_key("company_id", company_id)
+
+    @allure.title("Request to check user creation and retrieve the created user")
+    def test_creation_and_getting_created_user(self, users):
+        # USER CREATION
+        payload = {"first_name": "Roque", "last_name": "Santa Cruz"}
+        user_creation = users.create_user(payload)
+        Asserts(user_creation) \
+            .status_code_should_be(HTTPStatus.CREATED) \
+            .validate_schema(User) \
+            .have_value_in_key("first_name", "Roque") \
+            .have_value_in_key("last_name", "Santa Cruz")
+        # GETTING USER_ID
+        user_id = load_data.get_value(user_creation, "user_id")
+        # GETTING USER
+        user_getting = users.get_user(user_id)
+        Asserts(user_getting) \
+            .status_code_should_be(HTTPStatus.OK) \
+            .validate_schema(User) \
+            .have_value_in_key("first_name", "Roque") \
+            .have_value_in_key("last_name", "Santa Cruz") \
+            .have_value_in_key("company_id", None)
+
 
 @pytest.mark.negative
 class UsersNegative:
@@ -136,3 +175,20 @@ class UsersNegative:
         Asserts(response) \
             .status_code_should_be(HTTPStatus.BAD_REQUEST) \
             .have_value_in_key("detail.reason", f"User could not be assigned to company with id: {company_id}. Because it is not active")
+
+    @allure.title("Request to check user by invalid \"user_id\"")
+    @pytest.mark.parametrize("user_id",
+                             [(-1), (0), (999999)])
+    def test_get_user_by_invalid_user_id(self, users, user_id):
+        response = users.get_user(user_id)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.NOT_FOUND) \
+            .have_value_in_key("detail.reason", f"User with requested id: {user_id} is absent")
+
+    @allure.title("Request to check user without required parameter \"user_id\"")
+    def test_get_user_without_user_id(self, users):
+        response = users.get_user()
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.UNPROCESSABLE_ENTITY) \
+            .have_value_in_key("detail[0].loc[1]", "user_id") \
+            .have_value_in_key("detail[0].msg", "value is not a valid integer")

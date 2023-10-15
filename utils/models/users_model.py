@@ -24,3 +24,4 @@ class User(BaseModel):
     first_name: str | None = None
     last_name: str
     company_id: int | None = None
+    user_id: int
