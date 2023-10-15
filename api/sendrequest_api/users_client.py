@@ -24,9 +24,9 @@ class UsersClient(ApiClient):
                         headers=headers)
 
     @allure.step("Updating user with id {user_id}")
-    def update_user(self, user_id: int, data: dict, headers: dict = None) -> Response:
+    def update_user(self, user_id: int, payload: dict, headers: dict = None) -> Response:
         return self.put(endpoint=f"{ApiRoutes.USERS}/{user_id}",
-                        json=data,
+                        json=payload,
                         headers=headers)
 
     @allure.step("Deleting user with id {user_id}")

@@ -32,12 +32,12 @@ class ApiClient(Client):
         return self.response
 
     @allure.step(f"Sending a PUT request to \"{Client.base_url}\"")
-    def put(self, endpoint: str, payload: dict = None, headers: dict = None, timeout: int = None) -> Response:
+    def put(self, endpoint: str, json: dict = None, headers: dict = None, timeout: int = None) -> Response:
         self.response = super().put(url=endpoint,
-                                    json=payload,
+                                    json=json,
                                     headers=headers,
                                     timeout=timeout)
-        log(response=self.response, request_body=payload)
+        log(response=self.response, request_body=json)
         return self.response
 
     @allure.step(f"Sending a DELETE request to \"{Client.base_url}\"")

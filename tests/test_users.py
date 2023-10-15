@@ -127,6 +127,59 @@ class UsersPositive:
             .have_value_in_key("last_name", "Santa Cruz") \
             .have_value_in_key("company_id", None)
 
+    @allure.title("Request to check \"first_name\" and \"last_name\" updating of existing user")
+    def test_update_first_name_and_last_name_of_existing_user(self, users):
+        payload = {"first_name": "new_name", "last_name": "new_surname"}
+        response = users.update_user(29203, payload)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.OK) \
+            .validate_schema(User) \
+            .have_value_in_key("first_name", "new_name") \
+            .have_value_in_key("last_name", "new_surname")
+
+    @allure.title("Request to check \"last_name\" and \"company_id\" updating of existing user")
+    def test_update_last_name_and_company_id_of_existing_user(self, users):
+        payload = {"last_name": "Marshall", "company_id": 1}
+        response = users.update_user(68, payload)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.OK) \
+            .validate_schema(User) \
+            .have_value_in_key("last_name", "Marshall") \
+            .have_value_in_key("company_id", 1)
+
+    @allure.title("Request to check user creation, updating and retrieve the updated user")
+    def test_creation_updating_and_getting_updated_user(self, users):
+        # USER CREATION
+        payload = {"first_name": "Alan",
+                   "last_name": "Turing", "company_id": 1}
+        user_creation = users.create_user(payload)
+        Asserts(user_creation) \
+            .status_code_should_be(HTTPStatus.CREATED) \
+            .validate_schema(User) \
+            .have_value_in_key("first_name", "Alan") \
+            .have_value_in_key("last_name", "Turing") \
+            .have_value_in_key("company_id", 1)
+        # GETTING USER_ID
+        user_id = load_data.get_value(user_creation, "user_id")
+        # UPDATING USER
+        payload = {"first_name": "Stephen",
+                   "last_name": "Hawking", "company_id": 2}
+        user_updating = users.update_user(user_id, payload)
+        Asserts(user_updating) \
+            .status_code_should_be(HTTPStatus.OK) \
+            .validate_schema(User) \
+            .have_value_in_key("first_name", "Stephen") \
+            .have_value_in_key("last_name", "Hawking") \
+            .have_value_in_key("company_id", 2)
+        # GETTING USER
+        user_getting = users.get_user(user_id)
+        Asserts(user_getting) \
+            .status_code_should_be(HTTPStatus.OK) \
+            .validate_schema(User) \
+            .have_value_in_key("first_name", "Stephen") \
+            .have_value_in_key("last_name", "Hawking") \
+            .have_value_in_key("company_id", 2)
+
 
 @pytest.mark.negative
 class UsersNegative:
@@ -192,3 +245,39 @@ class UsersNegative:
             .status_code_should_be(HTTPStatus.UNPROCESSABLE_ENTITY) \
             .have_value_in_key("detail[0].loc[1]", "user_id") \
             .have_value_in_key("detail[0].msg", "value is not a valid integer")
+
+    @allure.title("Request to check if the \"first_name\" field of an existing user has been updated without the mandatory \"last_name\" parameter")
+    def test_update_existing_user_without_required_parameter_last_name(self, users):
+        payload = {"first_name": "new_surname7"}
+        response = users.update_user(68, payload)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.UNPROCESSABLE_ENTITY) \
+            .have_value_in_key("detail[0].loc[0].body", "last_name") \
+            .have_value_in_key("detail[0].msg", "field required")
+
+    @allure.title("Request to check update of a non-existent user")
+    @pytest.mark.parametrize("user_id, last_name",
+                             [(-1, "surname1"), (0, "surname2"), (999999, "surname3")])
+    def test_update_non_existent_user(self, users, user_id, last_name):
+        payload = {"last_name": last_name}
+        response = users.update_user(user_id, payload)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.NOT_FOUND) \
+            .have_value_in_key("detail.reason", f"User with requested id: {user_id} is absent")
+
+    @allure.title("Request to check if the user's \"company_id\" is updated to an inactive company")
+    @pytest.mark.parametrize(
+        "user_id, last_name, company_id",
+        [
+            pytest.param(96, "Babel", 4, id="Nord BANKRUPT"),
+            pytest.param(97, "Keane", 5, id="Apple CLOSED"),
+            pytest.param(98, "Murphy", 6, id="BitcoinCorp CLOSED"),
+            pytest.param(99, "Tucker", 7, id="Xiaomi BANKRUPT")
+        ]
+    )
+    def test_update_last_name_and_company_id_user_where_company_inactive(self, users, user_id, last_name, company_id):
+        payload = {"last_name": last_name, "company_id": company_id}
+        response = users.update_user(user_id, payload)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.BAD_REQUEST) \
+            .have_value_in_key("detail.reason", f"User could not be assigned to company with id: {company_id}. Because it is not active")
