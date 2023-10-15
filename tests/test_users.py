@@ -93,7 +93,7 @@ class UsersPositive:
         "user_id, first_name, last_name, company_id",
         [
             (29175, None, "za_lyubov4", None),
-            (68, "Diana", "Donovan", 2),
+            (97, "vlad", "vlad", 3),
             (101, "Ne ny eto odnoznachno", "BAGGGGGGGG", 1)
         ]
     )
@@ -130,7 +130,7 @@ class UsersPositive:
     @allure.title("Request to check \"first_name\" and \"last_name\" updating of existing user")
     def test_update_first_name_and_last_name_of_existing_user(self, users):
         payload = {"first_name": "new_name", "last_name": "new_surname"}
-        response = users.update_user(29203, payload)
+        response = users.update_user(96, payload)
         Asserts(response) \
             .status_code_should_be(HTTPStatus.OK) \
             .validate_schema(User) \
@@ -179,6 +179,28 @@ class UsersPositive:
             .have_value_in_key("first_name", "Stephen") \
             .have_value_in_key("last_name", "Hawking") \
             .have_value_in_key("company_id", 2)
+
+    @allure.title("Request to check deletion of a created user")
+    def test_delete_of_created_user(self, users):
+        # CREATING USER
+        payload = {"first_name": "Jimi", "last_name": "Hendrix"}
+        user_creation = users.create_user(payload)
+        Asserts(user_creation) \
+            .status_code_should_be(HTTPStatus.CREATED) \
+            .validate_schema(User) \
+            .have_value_in_key("first_name", "Jimi") \
+            .have_value_in_key("last_name", "Hendrix") \
+            # GETTING USER_ID
+        user_id = load_data.get_value(user_creation, "user_id")
+        # DELETED USER
+        user_deletion = users.delete_user(user_id)
+        Asserts(user_deletion) \
+            .status_code_should_be(HTTPStatus.ACCEPTED)
+        # GETTING DELETED USER
+        user_getting = users.get_user(user_id)
+        Asserts(user_getting) \
+            .status_code_should_be(HTTPStatus.NOT_FOUND) \
+            .have_value_in_key("detail.reason", f"User with requested id: {user_id} is absent")
 
 
 @pytest.mark.negative
@@ -257,7 +279,7 @@ class UsersNegative:
 
     @allure.title("Request to check update of a non-existent user")
     @pytest.mark.parametrize("user_id, last_name",
-                             [(-1, "surname1"), (0, "surname2"), (999999, "surname3")])
+                             [(-1, "surname1"), (0, "surname2"), (888888, "surname3")])
     def test_update_non_existent_user(self, users, user_id, last_name):
         payload = {"last_name": last_name}
         response = users.update_user(user_id, payload)
@@ -281,3 +303,20 @@ class UsersNegative:
         Asserts(response) \
             .status_code_should_be(HTTPStatus.BAD_REQUEST) \
             .have_value_in_key("detail.reason", f"User could not be assigned to company with id: {company_id}. Because it is not active")
+
+    @allure.title("Request to check delete of a non-existent user")
+    @pytest.mark.parametrize("user_id",
+                             [(-1), (0), (777777)])
+    def test_delete_of_non_existent_user(self, users, user_id):
+        response = users.get_user(user_id)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.NOT_FOUND) \
+            .have_value_in_key("detail.reason", f"User with requested id: {user_id} is absent")
+
+    @allure.title("Request to check the deleting of a user without a required parameter \"user_id\"")
+    def test_delete_user_without_required_parameter_user_id(self, users):
+        response = users.get_user()
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.UNPROCESSABLE_ENTITY) \
+            .have_value_in_key("detail[0].loc[1]", "user_id") \
+            .have_value_in_key("detail[0].msg", "value is not a valid integer")

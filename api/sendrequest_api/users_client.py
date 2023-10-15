@@ -30,6 +30,6 @@ class UsersClient(ApiClient):
                         headers=headers)
 
     @allure.step("Deleting user with id {user_id}")
-    def delete_user(self, user_id: int, headers: dict = None) -> Response:
+    def delete_user(self, user_id: int = None, headers: dict = None) -> Response:
         return self.delete(endpoint=f"{ApiRoutes.USERS}/{user_id}",
                            headers=headers)
