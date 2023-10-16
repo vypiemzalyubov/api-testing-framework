@@ -2,12 +2,12 @@ from enum import Enum
 
 
 class ApiRoutes(str, Enum):
-    COMPANIES = "/api/companies"
-    USERS = "/api/users"
-    AUTH_AUTORIZE = "/api/auth/authorize"
-    AUTH_ME = "/api/auth/me"
-    ISSUES_COMPANIES = "/api/issues/companies"
-    ISSUES_USERS = "/api/issues/users"
+    COMPANIES = "/companies"
+    USERS = "/users"
+    AUTH_AUTORIZE = "/auth/authorize"
+    AUTH_ME = "/auth/me"
+    ISSUES_COMPANIES = "/issues/companies"
+    ISSUES_USERS = "/issues/users"
 
     def __str__(self) -> str:
         return self.value

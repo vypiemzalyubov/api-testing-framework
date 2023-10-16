@@ -1,17 +1,13 @@
-import os
 import allure
 from httpx import Client, Response
-from dotenv import load_dotenv
+from settings import base_settings
 from utils.logger import log
-
-
-load_dotenv()
 
 
 class ApiClient(Client):
 
     def __init__(self) -> None:
-        super().__init__(base_url=os.getenv("BASE_URL"))
+        super().__init__(base_url=base_settings.api_url)
 
     @allure.step(f"Sending a GET request to \"{Client.base_url}\"")
     def get(self, endpoint: str, params: dict = None, headers: dict = None, timeout: int = None) -> Response:
