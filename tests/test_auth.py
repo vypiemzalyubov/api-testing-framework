@@ -134,6 +134,7 @@ class AuthNegative:
             .validate_schema(Token)
         # GETTING TOKEN VALUE
         token = load_data.get_value(auth_response, "token")
+        # WAITING FOR TOKEN TO EXPIRE
         time.sleep(2)
         # AUTHORIZATION USER
         auth_header = {"x-token": token}
