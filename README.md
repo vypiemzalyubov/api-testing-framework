@@ -51,3 +51,15 @@ api-testing-framework/
 ├─ README.md
 ├─ requirements.txt
 ```
+
+## :pushpin: Running in Docker
+```bash
+# Build an image named "pytest-runner"
+docker build -t api-testing-runner .
+
+# Launch the container
+docker run api-testing-runner
+
+# Running with Docker Compose
+docker-compose up --build
+```

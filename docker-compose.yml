@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  test_runner:
+    build: .
+    image: api_testing_runner
+    container_name: api_testing_runner_works
+    volumes:
+      - .:/api-testing-framework/
