@@ -7,7 +7,7 @@ from api.routes import ApiRoutes
 class AuthClient(ApiClient):
 
     @allure.step("Getting auth token")
-    def create_auth_token(self, data: dict, headers: dict = None) -> Response:
+    def create_auth_token(self, data: dict = None, headers: dict = None) -> Response:
         return self.post(endpoint=f"{ApiRoutes.AUTH_AUTORIZE}",
                          json=data,
                          headers=headers)

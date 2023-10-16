@@ -20,22 +20,31 @@ This project implements a framework to automate testing of the [**"Send Request"
 api-testing-framework/
 ├─ api
 │  ├─ sendrequest_api/
-│  |  ├─ companies_api.py
+│  |  ├─ auth_client.py
+│  |  ├─ companies_client.py
+│  |  ├─ users_client.py
 │  ├─ api_client.py
+│  ├─ routes.py
 ├─ fixtures
-│  ├─ companies_api_fixture.py
+│  ├─ auth_fixture.py
+│  ├─ companies_fixture.py
+│  ├─ users_fixture.py
 ├─ tests/
 │  ├─ __init__.py
+│  ├─ test_auth.py
 │  ├─ test_companies.py
+│  ├─ test_users.py
 ├─ utils
 │  ├─ models/
+│  |  ├─ auth_model.py
 │  |  ├─ companies_model.py
+│  |  ├─ users_model.py
 │  ├─ asserts.py
 │  ├─ logger.py
 │  ├─ parser.py
 ├─ .env
 ├─ .gitignore
-├─ README.md
 ├─ pytest.ini
+├─ README.md
 ├─ requirements.txt
 ```
