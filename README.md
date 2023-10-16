@@ -49,6 +49,8 @@ api-testing-framework/
 │  ├─ parser.py
 ├─ .env
 ├─ .gitignore
+├─ docker-compose.yml
+├─ Dockerfile
 ├─ pytest.ini
 ├─ README.md
 ├─ requirements.txt
