@@ -6,7 +6,6 @@ from utils.asserts import Asserts
 # from utils.models.users_model import User, UserList
 
 
-pytest_plugins = ["fixtures.issues_fixture"]
 pytestmark = [allure.parent_suite("sendrequest"),
               allure.suite("issues")]
 

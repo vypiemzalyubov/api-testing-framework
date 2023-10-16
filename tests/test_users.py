@@ -6,7 +6,6 @@ from utils.data.load import load_data
 from utils.models.users_model import User, UserList
 
 
-pytest_plugins = ["fixtures.users_fixture"]
 pytestmark = [allure.parent_suite("sendrequest"),
               allure.suite("users")]
 
@@ -190,7 +189,7 @@ class UsersPositive:
             .validate_schema(User) \
             .have_value_in_key("first_name", "Jimi") \
             .have_value_in_key("last_name", "Hendrix") \
-        # GETTING USER_ID
+            # GETTING USER_ID
         user_id = load_data.get_value(user_creation, "user_id")
         # DELETED USER
         user_deletion = users.delete_user(user_id)

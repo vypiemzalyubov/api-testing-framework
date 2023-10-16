@@ -53,6 +53,7 @@ api-testing-framework/
 │  ├─ parser.py
 ├─ .env
 ├─ .gitignore
+├─ conftest.py
 ├─ docker-compose.yml
 ├─ Dockerfile
 ├─ pytest.ini

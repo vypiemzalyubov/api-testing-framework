@@ -7,7 +7,6 @@ from utils.data.load import load_data
 from utils.models.auth_model import Token, UserAuth
 
 
-pytest_plugins = ["fixtures.auth_fixture"]
 pytestmark = [allure.parent_suite("sendrequest"),
               allure.suite("auth")]
 
@@ -36,7 +35,7 @@ class AuthPositive:
 
     @allure.title("Request to receive authorization token and authorize the user by checking the \"login\" boundary values")
     @pytest.mark.parametrize("login",
-                             [("Mia"), ("Phil")])    
+                             [("Mia"), ("Phil")])
     def test_get_auth_token_and_authorize_user_where_length_login_in_boundary_values(self, auth, login):
         # GETTING AUTH TOKEN
         payload = {"login": login, "password": "qwerty12345"}
@@ -122,7 +121,7 @@ class AuthNegative:
         Asserts(response) \
             .status_code_should_be(HTTPStatus.FORBIDDEN) \
             .have_value_in_key("detail.reason", "Token is incorrect. Please login and try again")
-        
+
     @allure.title("Request to retrieve user data with expired token")
     def test_authorize_user_with_expired_token(self, auth):
         # GETTING AUTH TOKEN
