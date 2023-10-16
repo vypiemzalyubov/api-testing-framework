@@ -12,7 +12,7 @@ class AuthClient(ApiClient):
                          json=data,
                          headers=headers)
 
-    @allure.step("Getting user data")
+    @allure.step("Getting user data by token")
     def auth_user(self, headers: dict = None) -> Response:
         return self.get(endpoint=f"{ApiRoutes.AUTH_ME}",
                         headers=headers)

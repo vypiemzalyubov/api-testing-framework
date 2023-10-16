@@ -22,17 +22,20 @@ api-testing-framework/
 │  ├─ sendrequest_api/
 │  |  ├─ auth_client.py
 │  |  ├─ companies_client.py
+│  |  ├─ issues_client.py
 │  |  ├─ users_client.py
 │  ├─ api_client.py
 │  ├─ routes.py
 ├─ fixtures
 │  ├─ auth_fixture.py
 │  ├─ companies_fixture.py
+│  ├─ issues_fixture.py
 │  ├─ users_fixture.py
 ├─ tests/
 │  ├─ __init__.py
 │  ├─ test_auth.py
 │  ├─ test_companies.py
+│  ├─ test_issues.py
 │  ├─ test_users.py
 ├─ utils
 │  ├─ models/

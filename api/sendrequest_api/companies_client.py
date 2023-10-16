@@ -6,12 +6,12 @@ from api.routes import ApiRoutes
 
 class CompaniesClient(ApiClient):
 
-    @allure.step("Getting all companies")
+    @allure.step("Getting companies")
     def get_companies(self, params: dict = None) -> Response:
         return self.get(endpoint=f"{ApiRoutes.COMPANIES}/", 
                         params=params)
 
-    @allure.step("Getting company with id {company_id}")
+    @allure.step("Getting company by id {company_id}")
     def get_company(self, company_id: int, headers: dict = None) -> Response:
         return self.get(endpoint=f"{ApiRoutes.COMPANIES}/{company_id}", 
                         headers=headers)
