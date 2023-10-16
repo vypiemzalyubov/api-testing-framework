@@ -53,6 +53,7 @@ class AuthPositive:
             .validate_schema(UserAuth) \
             .have_value_in_key("user_name", login)
 
+
 @pytest.mark.negative
 class AuthNegative:
 
@@ -105,3 +106,18 @@ class AuthNegative:
         Asserts(response) \
             .status_code_should_be(HTTPStatus.UNPROCESSABLE_ENTITY) \
             .have_value_in_key("detail[0].msg", "field required")
+
+    @allure.title("Request to retrieve user data without token")
+    def test_authorize_user_without_token(self, auth):
+        response = auth.auth_user()
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.UNAUTHORIZED) \
+            .have_value_in_key("detail.reason", "Please use auth method for getting data for private method")
+
+    @allure.title("Request to retrieve user data with invalid token")
+    def test_authorize_user_with_invalid_token(self, auth):
+        auth_header = {"x-token": "test_token"}
+        response = auth.auth_user(auth_header)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.FORBIDDEN) \
+            .have_value_in_key("detail.reason", "Token is incorrect. Please login and try again")
