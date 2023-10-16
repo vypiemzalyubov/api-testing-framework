@@ -5,7 +5,7 @@ class Token(BaseModel):
     token: str
 
 
-class AuthUser(BaseModel):
+class UserAuth(BaseModel):
     user_name: str
     email_address: str
     valid_till: str

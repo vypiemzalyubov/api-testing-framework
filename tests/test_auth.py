@@ -3,7 +3,7 @@ import pytest
 from http import HTTPStatus
 from utils.asserts import Asserts
 from utils.data.load import load_data
-from utils.models.auth_model import Token, AuthUser
+from utils.models.auth_model import Token, UserAuth
 
 
 pytest_plugins = ["fixtures.auth_fixture"]
@@ -17,7 +17,8 @@ class AuthPositive:
     @allure.title("Request to receive an authorization token and authorize the user")
     def test_get_auth_token_and_authorize_user(self, auth):
         # GETTING AUTH TOKEN
-        payload = {"login": "John Malkovich", "password": "qwerty12345", "timeout": 360}
+        payload = {"login": "John Malkovich",
+                   "password": "qwerty12345", "timeout": 360}
         auth_response = auth.create_auth_token(payload)
         Asserts(auth_response) \
             .status_code_should_be(HTTPStatus.OK) \
@@ -29,5 +30,5 @@ class AuthPositive:
         user_response = auth.auth_user(auth_header)
         Asserts(user_response) \
             .status_code_should_be(HTTPStatus.OK) \
+            .validate_schema(UserAuth) \
             .have_value_in_key("user_name", "John Malkovich")
-        
