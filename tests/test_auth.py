@@ -1,3 +1,4 @@
+import time
 import allure
 import pytest
 from http import HTTPStatus
@@ -121,3 +122,22 @@ class AuthNegative:
         Asserts(response) \
             .status_code_should_be(HTTPStatus.FORBIDDEN) \
             .have_value_in_key("detail.reason", "Token is incorrect. Please login and try again")
+        
+    @allure.title("Request to retrieve user data with expired token")
+    def test_authorize_user_with_expired_token(self, auth):
+        # GETTING AUTH TOKEN
+        payload = {"login": "Laura Palmer",
+                   "password": "qwerty12345", "timeout": 1}
+        auth_response = auth.create_auth_token(payload)
+        Asserts(auth_response) \
+            .status_code_should_be(HTTPStatus.OK) \
+            .validate_schema(Token)
+        # GETTING TOKEN VALUE
+        token = load_data.get_value(auth_response, "token")
+        time.sleep(2)
+        # AUTHORIZATION USER
+        auth_header = {"x-token": token}
+        user_response = auth.auth_user(auth_header)
+        Asserts(user_response) \
+            .status_code_should_be(HTTPStatus.FORBIDDEN) \
+            .have_value_in_key("detail.reason", "Token is expired. Please login and try again")
