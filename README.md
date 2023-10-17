@@ -62,6 +62,48 @@ api-testing-framework/
 ├─ settings.py
 ```
 
+## :rocket: Project Setup
+```bash
+# Clone repository
+git clone https://github.com/vypiemzalyubov/api-testing-framework.git
+
+# Install virtual environment
+python3 -m venv venv
+
+# Activate virtual environment
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+## :rocket: Running tests
+```python
+# Run all tests
+pytest tests/
+
+# Run positive test cases
+pytest -m "positive"
+
+# Run negative test cases
+pytest -m "negative"
+```
+>Default startup options in `pytest.ini`:
+>```python
+>addopts = 
+>        -s -v
+>        --tb=short
+>        --alluredir=allure-results
+>```
+
+## :rocket: Viewing reports
+- Install [**Allure**](https://docs.qameta.io/allure/#_get_started) from the official website
+- Generate Allure report
+  
+  ```bash
+  allure serve
+  ```
+
 ## :rocket: Running in Docker
 
 ```bash
