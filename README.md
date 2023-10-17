@@ -1,4 +1,4 @@
-# Api Testing Framework 
+# API Testing Framework 
 
 [![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/downloads/release/python-3120/)
 [![License MIT](https://img.shields.io/badge/license-MIT-green)](https://github.com/vypiemzalyubov/api-testing-framework/blob/main/LICENSE)
