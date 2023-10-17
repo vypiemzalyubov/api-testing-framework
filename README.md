@@ -55,6 +55,7 @@ api-testing-framework/
 ├─ conftest.py
 ├─ docker-compose.yml
 ├─ Dockerfile
+├─ LICENSE
 ├─ pytest.ini
 ├─ README.md
 ├─ requirements.txt
