@@ -62,7 +62,7 @@ api-testing-framework/
 ├─ settings.py
 ```
 
-## :rocket: Project Setup
+## :rocket: Getting Started
 ```bash
 # Clone repository
 git clone https://github.com/vypiemzalyubov/api-testing-framework.git
