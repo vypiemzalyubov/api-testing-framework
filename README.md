@@ -6,7 +6,7 @@ This project implements a framework to automate testing of the [**"Send Request"
 
 ## :rocket: Description:
 
-Automated CRUD (`POST`, `GET`, `PUT`, `DELETE`) APIs using `Python` and `Pytest`
+Automated CRUD APIs using `Python` and `Pytest`
 
 ## :rocket: Prerequisites:
 
