@@ -14,14 +14,14 @@ pytestmark = [allure.feature("Send Request"),
 @pytest.mark.positive
 class IssuesPositive:
 
-    @allure.title("Request issues data without parameters about the list of companies")
+    @allure.title("Get the list of issues companies without query parameters")
     def test_issues_get_company_list_without_parameters(self, issues):
         response = issues.get_issues_companies()
         Asserts(response) \
             .status_code_should_be(HTTPStatus.OK) \
             .validate_schema(CompanyList)
 
-    @allure.title("Request to check filtering issues company list by status")
+    @allure.title("Get list of issues companies filtered by status")
     @pytest.mark.parametrize(
         "status, company_status",
         [
@@ -40,7 +40,7 @@ class IssuesPositive:
             .validate_schema(CompanyList) \
             .have_value_in_key("data[*].company_status", company_status)
 
-    @allure.title("Request to check filtering of issues companies by limit")
+    @allure.title("Get list of issues companies filtered by limit")
     @pytest.mark.parametrize(
         "limit, total",
         [
@@ -61,7 +61,7 @@ class IssuesPositive:
             .validate_schema(CompanyList) \
             .has_sum_of_values("data", total)
 
-    @allure.title("Request to check filtering of issues companies by limit and offset")
+    @allure.title("Get list of issues companies filtered by limit and offset")
     @pytest.mark.parametrize("limit, offset, company_id",
                              [(1, 0, 5), (1, 1, 6)])
     def test_issues_get_company_list_by_limit_and_offset(self, issues, limit, offset, company_id):
@@ -76,7 +76,7 @@ class IssuesPositive:
 @pytest.mark.negative
 class IssuesNegative:
 
-    @allure.title("Request to check the filtering of issues companies by invalid argument of the parameter \"status\"")
+    @allure.title("Get the list of issues companies with invalid query parameter status")
     @pytest.mark.parametrize("status",
                              ["active", "bankrupt", "closed", "test"])
     def test_issues_get_company_list_by_invalid_status(self, issues, status):

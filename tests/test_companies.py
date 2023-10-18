@@ -13,14 +13,14 @@ pytestmark = [allure.feature("Send Request"),
 @pytest.mark.positive
 class CompaniesPositive:
 
-    @allure.title("Request data without parameters about the list of companies")
+    @allure.title("Get the list of companies without query parameters")
     def test_get_company_list_without_parameters(self, companies):
         response = companies.get_companies()
         Asserts(response) \
             .status_code_should_be(HTTPStatus.OK) \
             .validate_schema(CompanyList)
 
-    @allure.title("Request to check filtering company list by status")
+    @allure.title("Get list of companies filtered by status")
     @pytest.mark.parametrize("status, company_status",
                              [("ACTIVE", "ACTIVE"), ("BANKRUPT", "BANKRUPT"), ("CLOSED", "CLOSED")])
     def test_get_company_list_by_status(self, companies, status, company_status):
@@ -31,7 +31,7 @@ class CompaniesPositive:
             .validate_schema(CompanyList) \
             .have_value_in_key("data[*].company_status", company_status)
 
-    @allure.title("Request to check filtering of companies by limit")
+    @allure.title("Get list of companies filtered by limit")
     @pytest.mark.parametrize("limit, total",
                              [(i, i) for i in range(7)])
     def test_get_company_list_by_limit(self, companies, limit, total):
@@ -42,7 +42,7 @@ class CompaniesPositive:
             .validate_schema(CompanyList) \
             .has_sum_of_values("data", total)
 
-    @allure.title("Request to check filtering of companies by limit and offset")
+    @allure.title("Get list of companies filtered by limit and offset")
     @pytest.mark.parametrize("limit, offset, company_id",
                              [(1, 4, 5), (1, 5, 6)])
     def test_get_company_list_by_limit_and_offset(self, companies, limit, offset, company_id):
@@ -53,7 +53,7 @@ class CompaniesPositive:
             .validate_schema(CompanyList) \
             .have_value_in_key("data[*].company_id", company_id)
 
-    @allure.title("Request company data by id")
+    @allure.title("Get company data by id")
     @pytest.mark.parametrize(
         "company_id, response_id, response_name, response_status",
         [
@@ -71,7 +71,7 @@ class CompaniesPositive:
             .have_value_in_key("data[*].company_name", response_name) \
             .have_value_in_key("data[*].company_status", response_status)
 
-    @allure.title("Request company data by id and available localization")
+    @allure.title("Get company data by id and available localization")
     @pytest.mark.parametrize(
         "company_id, headers, response_translation",
         [
@@ -94,7 +94,7 @@ class CompaniesPositive:
 @pytest.mark.negative
 class CompaniesNegative:
 
-    @allure.title("Request to check the filtering of companies by invalid argument of the parameter \"status\"")
+    @allure.title("Get the list of companies with invalid query parameter status")
     @pytest.mark.parametrize("status",
                              ["active", "bankrupt", "closed", "test"])
     def test_get_company_list_by_invalid_status(self, companies, status):
