@@ -6,8 +6,8 @@ from utils.data.load import load_data
 from utils.models.companies_model import Company, CompanyList
 
 
-pytestmark = [allure.parent_suite("sendrequest"),
-              allure.suite("companies")]
+pytestmark = [allure.feature("sendrequest"),
+              allure.story("companies")]
 
 
 @pytest.mark.positive

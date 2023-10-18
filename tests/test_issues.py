@@ -7,8 +7,8 @@ from utils.models.companies_model import Company, CompanyList
 # from utils.models.users_model import User, UserList
 
 
-pytestmark = [allure.parent_suite("sendrequest"),
-              allure.suite("issues")]
+pytestmark = [allure.feature("sendrequest"),
+              allure.story("issues")]
 
 
 @pytest.mark.positive
@@ -52,7 +52,7 @@ class IssuesPositive:
             pytest.param(6, 6, marks=pytest.mark.xfail(
                 reason="There are no companies with \"ACTIVE\" and \"BANKRUPT\" statuses"))
         ]
-    )    
+    )
     def test_issues_get_company_list_by_limit(self, issues, limit, total):
         params = {"limit": limit}
         response = issues.get_issues_companies(params)
@@ -93,7 +93,7 @@ class IssuesNegative:
         Asserts(response) \
             .status_code_should_be(HTTPStatus.OK) \
             .has_sum_of_values("data", 2)
-        
+
     @allure.title("Request to check filtering by offset greater than or equal to the total number of issues companies")
     @pytest.mark.parametrize("offset, total",
                              [(2, 0), (3, 0)])

@@ -6,8 +6,8 @@ from utils.data.load import load_data
 from utils.models.users_model import User, UserList
 
 
-pytestmark = [allure.parent_suite("sendrequest"),
-              allure.suite("users")]
+pytestmark = [allure.feature("sendrequest"),
+              allure.story("users")]
 
 
 @pytest.mark.positive

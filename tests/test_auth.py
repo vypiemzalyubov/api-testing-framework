@@ -7,8 +7,8 @@ from utils.data.load import load_data
 from utils.models.auth_model import Token, UserAuth
 
 
-pytestmark = [allure.parent_suite("sendrequest"),
-              allure.suite("auth")]
+pytestmark = [allure.feature("sendrequest"),
+              allure.story("auth")]
 
 
 @pytest.mark.positive
