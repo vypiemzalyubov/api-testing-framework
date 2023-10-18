@@ -6,7 +6,7 @@ from utils.data.load import load_data
 from utils.models.users_model import User, UserList
 
 
-pytestmark = [allure.feature("sendrequest"),
+pytestmark = [allure.feature("Send Request"),
               allure.story("users")]
 
 

@@ -7,7 +7,7 @@ from utils.data.load import load_data
 from utils.models.auth_model import Token, UserAuth
 
 
-pytestmark = [allure.feature("sendrequest"),
+pytestmark = [allure.feature("Send Request"),
               allure.story("auth")]
 
 

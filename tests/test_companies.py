@@ -6,7 +6,7 @@ from utils.data.load import load_data
 from utils.models.companies_model import Company, CompanyList
 
 
-pytestmark = [allure.feature("sendrequest"),
+pytestmark = [allure.feature("Send Request"),
               allure.story("companies")]
 
 
