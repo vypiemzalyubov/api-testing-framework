@@ -61,11 +61,22 @@ class IssuesPositive:
             .validate_schema(CompanyList) \
             .has_sum_of_values("data", total)
 
+    @allure.title("Request to check filtering of issues companies by limit and offset")
+    @pytest.mark.parametrize("limit, offset, company_id",
+                             [(1, 0, 5), (1, 1, 6)])
+    def test_issues_get_company_list_by_limit_and_offset(self, issues, limit, offset, company_id):
+        params = {"limit": limit, "offset": offset}
+        response = issues.get_issues_companies(params)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.OK) \
+            .validate_schema(CompanyList) \
+            .have_value_in_key("data[*].company_id", company_id)
+
 
 @pytest.mark.negative
 class IssuesNegative:
 
-    @allure.title("Request with invalid arguments of the \"status\" parameter")
+    @allure.title("Request to check the filtering of issues companies by invalid argument of the parameter \"status\"")
     @pytest.mark.parametrize("status",
                              ["active", "bankrupt", "closed", "test"])
     def test_issues_get_company_list_by_invalid_status(self, issues, status):
@@ -74,3 +85,21 @@ class IssuesNegative:
         Asserts(response) \
             .status_code_should_be(HTTPStatus.UNPROCESSABLE_ENTITY) \
             .have_value_in_key("detail[0].msg", "value is not a valid enumeration member; permitted: 'ACTIVE', 'BANKRUPT', 'CLOSED'")
+
+    @allure.title("Request to check filtering by a limit greater than the total number of issues companies")
+    def test_issues_get_company_list_by_limit_where_limit_greather_total(self, issues):
+        params = {"limit": 8}
+        response = issues.get_issues_companies(params)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.OK) \
+            .has_sum_of_values("data", 2)
+        
+    @allure.title("Request to check filtering by offset greater than or equal to the total number of issues companies")
+    @pytest.mark.parametrize("offset, total",
+                             [(2, 0), (3, 0)])
+    def test_issues_get_company_list_by_offset_where_offset_greather_or_equal_total(self, issues, offset, total):
+        params = {"offset": offset}
+        response = issues.get_issues_companies(params)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.OK) \
+            .has_sum_of_values("data", total)

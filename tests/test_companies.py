@@ -94,7 +94,7 @@ class CompaniesPositive:
 @pytest.mark.negative
 class CompaniesNegative:
 
-    @allure.title("Request with invalid arguments of the \"status\" parameter")
+    @allure.title("Request to check the filtering of companies by invalid argument of the parameter \"status\"")
     @pytest.mark.parametrize("status",
                              ["active", "bankrupt", "closed", "test"])
     def test_get_company_list_by_invalid_status(self, companies, status):
