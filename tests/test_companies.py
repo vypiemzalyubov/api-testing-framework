@@ -20,7 +20,7 @@ class CompaniesPositive:
             .status_code_should_be(HTTPStatus.OK) \
             .validate_schema(CompanyList)
 
-    @allure.title("Request to check filtering by status")
+    @allure.title("Request to check filtering company list by status")
     @pytest.mark.parametrize("status, company_status",
                              [("ACTIVE", "ACTIVE"), ("BANKRUPT", "BANKRUPT"), ("CLOSED", "CLOSED")])
     def test_get_company_list_by_status(self, companies, status, company_status):

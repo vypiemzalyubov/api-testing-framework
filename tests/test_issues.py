@@ -20,7 +20,47 @@ class IssuesPositive:
         Asserts(response) \
             .status_code_should_be(HTTPStatus.OK) \
             .validate_schema(CompanyList)
-        
+
+    @allure.title("Request to check filtering issues company list by status")
+    @pytest.mark.parametrize(
+        "status, company_status",
+        [
+            pytest.param("ACTIVE", "ACTIVE", marks=pytest.mark.xfail(
+                reason="The CLOSED filter is permanently applied regardless of the value passed in")),
+            pytest.param("BANKRUPT", "BANKRUPT", marks=pytest.mark.xfail(
+                reason="The CLOSED filter is permanently applied regardless of the value passed in")),
+            pytest.param("CLOSED", "CLOSED")
+        ]
+    )
+    def test_issues_get_company_list_by_status(self, issues, status, company_status):
+        params = {"status": status}
+        response = issues.get_issues_companies(params)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.OK) \
+            .validate_schema(CompanyList) \
+            .have_value_in_key("data[*].company_status", company_status)
+
+    @allure.title("Request to check filtering of issues companies by limit")
+    @pytest.mark.parametrize(
+        "limit, total",
+        [
+            pytest.param(0, 0),
+            pytest.param(1, 1),
+            pytest.param(2, 2),
+            pytest.param(3, 3, marks=pytest.mark.xfail(
+                reason="There are no companies with \"ACTIVE\" and \"BANKRUPT\" statuses")),
+            pytest.param(6, 6, marks=pytest.mark.xfail(
+                reason="There are no companies with \"ACTIVE\" and \"BANKRUPT\" statuses"))
+        ]
+    )    
+    def test_issues_get_company_list_by_limit(self, issues, limit, total):
+        params = {"limit": limit}
+        response = issues.get_issues_companies(params)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.OK) \
+            .validate_schema(CompanyList) \
+            .has_sum_of_values("data", total)
+
 
 @pytest.mark.negative
 class IssuesNegative:
