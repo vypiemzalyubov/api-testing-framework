@@ -1,6 +1,6 @@
+from http import HTTPStatus
 import allure
 import pytest
-from http import HTTPStatus
 from utils.asserts import Asserts
 from utils.data.load import load_data
 from utils.models.users_model import User, UserList

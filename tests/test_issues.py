@@ -1,10 +1,8 @@
+from http import HTTPStatus
 import allure
 import pytest
-from http import HTTPStatus
 from utils.asserts import Asserts
-from utils.models.companies_model import Company, CompanyList
-# from utils.data.load import load_data
-# from utils.models.users_model import User, UserList
+from utils.models.companies_model import CompanyList
 
 
 pytestmark = [allure.feature("Send Request"),

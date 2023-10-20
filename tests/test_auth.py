@@ -1,7 +1,7 @@
+from http import HTTPStatus
 import time
 import allure
 import pytest
-from http import HTTPStatus
 from utils.asserts import Asserts
 from utils.data.load import load_data
 from utils.models.auth_model import Token, UserAuth

@@ -52,6 +52,7 @@ api-testing-framework/
 │  ├─ parser.py
 ├─ .env
 ├─ .gitignore
+├─ .pylintrc
 ├─ conftest.py
 ├─ docker-compose.yml
 ├─ Dockerfile
