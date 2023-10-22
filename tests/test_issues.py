@@ -2,7 +2,8 @@ from http import HTTPStatus
 import allure
 import pytest
 from utils.asserts import Asserts
-from utils.models.companies_model import CompanyList
+from utils.data.load import load_data
+from utils.models.companies_model import Company, CompanyList
 
 
 pytestmark = [allure.feature("Send Request"),
@@ -70,6 +71,46 @@ class IssuesPositive:
             .validate_schema(CompanyList) \
             .have_value_in_key("data[*].company_id", company_id)
 
+    @allure.title("Get issues company data by id with waiting for a long server response")
+    @pytest.mark.parametrize(
+        "company_id, response_id, response_name, response_status",
+        [
+            pytest.param(1, 1, "Tesla", "ACTIVE",
+                         id="Tesla - long server response"),
+            pytest.param(4, 4, "Nord", "BANKRUPT",
+                         id="Nord - long server response"),
+            pytest.param(6, 6, "BitcoinCorp", "CLOSED",
+                         id="BitcoinCorp - long server response")
+        ]
+    )
+    def test_issues_get_company_by_id(self, issues, company_id, response_id, response_name, response_status):
+        response = issues.get_issues_company(company_id)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.OK) \
+            .validate_schema(Company) \
+            .have_value_in_key("data[*].company_id", response_id) \
+            .have_value_in_key("data[*].company_name", response_name) \
+            .have_value_in_key("data[*].company_status", response_status)
+
+    @allure.title("Get issues company data by id and available localization with waiting for a long server response")
+    @pytest.mark.parametrize(
+        "company_id, headers, response_translation",
+        [
+            pytest.param(3, {"Accept-Language": "RU"},
+                         load_data.load_translation("RU"), id="translation RU - long server response"),
+            pytest.param(1, {"Accept-Language": "EN"},
+                         load_data.load_translation("EN"), id="translation EN - long server response"),
+            pytest.param(1, {"Accept-Language": "PL"},
+                         load_data.load_translation("PL"), id="translation PL - long server response")
+        ]
+    )
+    def test_issues_get_company_by_id_and_localization(self, issues, company_id, headers, response_translation):
+        response = issues.get_issues_company(company_id, headers)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.OK) \
+            .validate_schema(Company) \
+            .have_value_in_key("description", response_translation)
+
 
 @pytest.mark.negative
 class IssuesNegative:
@@ -101,3 +142,29 @@ class IssuesNegative:
         Asserts(response) \
             .status_code_should_be(HTTPStatus.OK) \
             .has_sum_of_values("data", total)
+
+    @allure.title("Request for data by id on non-existent issues company with waiting for a long server response")
+    def test_issues_get_non_existent_company_by_id(self, issues):
+        response = issues.get_issues_company(9)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.NOT_FOUND) \
+            .have_value_in_key("detail.reason", "Company with requested id: 9 is absent")
+
+    @allure.title("Request issues company data by id and unavailable localization with waiting for a long server response")
+    @pytest.mark.parametrize(
+        "company_id, headers, response_locale",
+        [
+            pytest.param(1, {"Accept-Language": "DE"}, "DE",
+                         id="DE - long server response"),
+            pytest.param(5, {"Accept-Language": "US"}, "US",
+                         id="US - long server response"),
+            pytest.param(3, {"Accept-Language": "NO"}, "NO",
+                         id="NO - long server response")
+        ]
+    )
+    def test_issues_get_company_by_id_and_unavailable_localization(self, issues, company_id, headers, response_locale):
+        response = issues.get_issues_company(company_id, headers)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.OK) \
+            .validate_schema(Company) \
+            .have_value_not_in_key("description_lang[*].translation_lang", response_locale)
