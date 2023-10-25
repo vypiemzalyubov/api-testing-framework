@@ -4,6 +4,7 @@ import pytest
 from utils.asserts import Asserts
 from utils.data.load import load_data
 from utils.models.companies_model import Company, CompanyList
+from utils.models.users_model import User
 
 
 pytestmark = [allure.feature("Send Request"),
@@ -111,6 +112,26 @@ class IssuesPositive:
             .validate_schema(Company) \
             .have_value_in_key("description", response_translation)
 
+    @allure.title("Request to check issues user data by id")
+    @pytest.mark.parametrize(
+        "user_id, company_id",
+        [
+            pytest.param(29175, None, marks=pytest.mark.xfail(
+                reason="\"user_id\" and \"company_id\" fields are missing in the response")),
+            pytest.param(97, 3, marks=pytest.mark.xfail(
+                reason="\"user_id\" and \"company_id\" fields are missing in the response")),
+            pytest.param(101, 1, marks=pytest.mark.xfail(
+                reason="\"user_id\" and \"company_id\" fields are missing in the response"))
+        ]
+    )
+    def test_issues_get_user_by_id(self, issues, user_id, company_id):
+        response = issues.get_issues_user(user_id)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.ACCEPTED) \
+            .validate_schema(User) \
+            .have_value_in_key("user_id", user_id) \
+            .have_value_in_key("company_id", company_id)
+
 
 @pytest.mark.negative
 class IssuesNegative:
@@ -168,3 +189,20 @@ class IssuesNegative:
             .status_code_should_be(HTTPStatus.OK) \
             .validate_schema(Company) \
             .have_value_not_in_key("description_lang[*].translation_lang", response_locale)
+
+    @allure.title("Request to check issues user by invalid \"user_id\"")
+    @pytest.mark.parametrize("user_id",
+                             [(-1), (0), (999999)])
+    def test_issues_get_user_by_invalid_user_id(self, issues, user_id):
+        response = issues.get_issues_user(user_id)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.NOT_FOUND) \
+            .have_value_in_key("detail.reason", f"User with requested id: {user_id} is absent")
+
+    @allure.title("Request to check the getting of a issues user without a required parameter \"user_id\"")
+    def test_issues_get_user_without_user_id(self, issues):
+        response = issues.get_issues_user()
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.UNPROCESSABLE_ENTITY) \
+            .have_value_in_key("detail[0].loc[1]", "user_id") \
+            .have_value_in_key("detail[0].msg", "value is not a valid integer")

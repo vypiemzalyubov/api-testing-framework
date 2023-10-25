@@ -307,14 +307,14 @@ class UsersNegative:
     @pytest.mark.parametrize("user_id",
                              [(-1), (0), (777777)])
     def test_delete_of_non_existent_user(self, users, user_id):
-        response = users.get_user(user_id)
+        response = users.delete_user(user_id)
         Asserts(response) \
             .status_code_should_be(HTTPStatus.NOT_FOUND) \
             .have_value_in_key("detail.reason", f"User with requested id: {user_id} is absent")
 
     @allure.title("Request to check the deleting of a user without a required parameter \"user_id\"")
     def test_delete_user_without_required_parameter_user_id(self, users):
-        response = users.get_user()
+        response = users.delete_user()
         Asserts(response) \
             .status_code_should_be(HTTPStatus.UNPROCESSABLE_ENTITY) \
             .have_value_in_key("detail[0].loc[1]", "user_id") \
