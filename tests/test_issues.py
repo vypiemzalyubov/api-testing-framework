@@ -132,6 +132,55 @@ class IssuesPositive:
             .have_value_in_key("user_id", user_id) \
             .have_value_in_key("company_id", company_id)
 
+    @allure.title("Request to check the creation of a issues user with a company")
+    @pytest.mark.xfail(reason="The user is created with incorrect data")
+    def test_issues_create_user_with_company_id(self, issues):
+        payload = {"first_name": "Dennis",
+                   "last_name": "Ritchie", "company_id": 1}
+        response = issues.create_issues_user(payload)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.CREATED) \
+            .validate_schema(User) \
+            .have_value_in_key("first_name", "Dennis") \
+            .have_value_in_key("last_name", "Ritchie") \
+            .have_value_in_key("company_id", 1)
+
+    @allure.title("Request to check the creation of a issues user without a \"company_id\"")
+    @pytest.mark.xfail(reason="The user is created with incorrect data")
+    def test_issues_create_user_without_company_id(self, issues):
+        payload = {"first_name": "Tim", "last_name": "Berners-Lee"}
+        response = issues.create_issues_user(payload)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.CREATED) \
+            .validate_schema(User) \
+            .have_value_in_key("first_name", "Tim") \
+            .have_value_in_key("last_name", "Berners-Lee") \
+            .have_value_in_key("company_id", None)
+
+    @allure.title("Request to check the creation of a issues user without a \"first_name\"")
+    @pytest.mark.xfail(reason="The user is created with incorrect data")
+    def test_issues_create_user_without_first_name(self, issues):
+        payload = {"last_name": "Stroustrup", "company_id": 2}
+        response = issues.create_issues_user(payload)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.CREATED) \
+            .validate_schema(User) \
+            .have_value_in_key("last_name", "Stroustrup") \
+            .have_value_in_key("company_id", 2) \
+            .have_value_in_key("first_name", None)
+
+    @allure.title("Request to check the creation of a issues user without a \"first_name\" and \"company_id\"")
+    @pytest.mark.xfail(reason="The user is created with incorrect data")
+    def test_issues_create_user_without_first_name_and_company_id(self, issues):
+        payload = {"last_name": "Torvalds"}
+        response = issues.create_issues_user(payload)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.CREATED) \
+            .validate_schema(User) \
+            .have_value_in_key("last_name", "Torvalds") \
+            .have_value_in_key("first_name", None) \
+            .have_value_in_key("company_id", None)
+
 
 @pytest.mark.negative
 class IssuesNegative:
@@ -206,3 +255,34 @@ class IssuesNegative:
             .status_code_should_be(HTTPStatus.UNPROCESSABLE_ENTITY) \
             .have_value_in_key("detail[0].loc[1]", "user_id") \
             .have_value_in_key("detail[0].msg", "value is not a valid integer")
+
+    @allure.title("Request to check the creation of a issues user without a required parameter \"last_name\"")
+    def test_issues_create_user_without_required_parameter_last_name(self, issues):
+        payload = {"first_name": "Kanye"}
+        response = issues.create_issues_user(payload)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.UNPROCESSABLE_ENTITY) \
+            .have_value_in_key("detail[0].loc[0].body", "last_name") \
+            .have_value_in_key("detail[0].msg", "field required")
+        
+    @allure.title("Request to check the creation of a issues user with an inactive company")
+    @pytest.mark.parametrize(
+        "company_id",
+        [
+            pytest.param(4, id="Nord BANKRUPT", marks=pytest.mark.xfail(
+                reason="A user is created with a binding to an inactive company")),
+            pytest.param(5, id="Apple CLOSED", marks=pytest.mark.xfail(
+                reason="A user is created with a binding to an inactive company")),
+            pytest.param(6, id="BitcoinCorp CLOSED", marks=pytest.mark.xfail(
+                reason="A user is created with a binding to an inactive company")),
+            pytest.param(7, id="Xiaomi BANKRUPT", marks=pytest.mark.xfail(
+                reason="A user is created with a binding to an inactive company"))
+        ]
+    )
+    def test_issues_create_user_with_inactive_company(self, issues, company_id):
+        payload = {"first_name": "James",
+                   "last_name": "Gosling", "company_id": company_id}
+        response = issues.create_issues_user(payload)
+        Asserts(response) \
+            .status_code_should_be(HTTPStatus.BAD_REQUEST) \
+            .have_value_in_key("detail.reason", f"User could not be assigned to company with id: {company_id}. Because it is not active")
