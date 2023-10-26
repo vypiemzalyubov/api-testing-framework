@@ -23,6 +23,9 @@ It is a complete framework for automating API testing using **Python** and **Pyt
 
 ```
 api-testing-framework/
+├─ .github/
+│  ├─ workflows/
+│  │  ├─ run.yml
 ├─ api
 │  ├─ sendrequest_api/
 │  |  ├─ auth_client.py
