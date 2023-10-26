@@ -189,7 +189,7 @@ class UsersPositive:
             .validate_schema(User) \
             .have_value_in_key("first_name", "Jimi") \
             .have_value_in_key("last_name", "Hendrix") \
-            # GETTING USER_ID
+        # GETTING USER_ID
         user_id = load_data.get_value(user_creation, "user_id")
         # DELETED USER
         user_deletion = users.delete_user(user_id)

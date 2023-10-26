@@ -181,6 +181,28 @@ class IssuesPositive:
             .have_value_in_key("first_name", None) \
             .have_value_in_key("company_id", None)
 
+    @allure.title("Request to check issues user creation and retrieve the created issues user")
+    @pytest.mark.xfail(reason="The user is created with incorrect data")
+    def test_issues_creation_and_getting_created_user(self, issues):
+        # CREATING USER
+        payload = {"first_name": "Billy", "last_name": "Milligan"}
+        user_creation = issues.create_issues_user(payload)
+        Asserts(user_creation) \
+            .status_code_should_be(HTTPStatus.CREATED) \
+            .validate_schema(User) \
+            .have_value_in_key("first_name", "Billy") \
+            .have_value_in_key("last_name", "Milligan")
+        # GETTING USER_ID
+        user_id = load_data.get_value(user_creation, "user_id")
+        # GETTING USER
+        user_getting = issues.get_issues_user(user_id)
+        Asserts(user_getting) \
+            .status_code_should_be(HTTPStatus.OK) \
+            .validate_schema(User) \
+            .have_value_in_key("first_name", "Billy") \
+            .have_value_in_key("last_name", "Milligan") \
+            .have_value_in_key("company_id", None)
+
 
 @pytest.mark.negative
 class IssuesNegative:
@@ -264,7 +286,7 @@ class IssuesNegative:
             .status_code_should_be(HTTPStatus.UNPROCESSABLE_ENTITY) \
             .have_value_in_key("detail[0].loc[0].body", "last_name") \
             .have_value_in_key("detail[0].msg", "field required")
-        
+
     @allure.title("Request to check the creation of a issues user with an inactive company")
     @pytest.mark.parametrize(
         "company_id",
