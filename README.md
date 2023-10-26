@@ -2,6 +2,7 @@
 
 [![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/downloads/release/python-3120/)
 [![License MIT](https://img.shields.io/badge/license-MIT-green)](https://github.com/vypiemzalyubov/api-testing-framework/blob/main/LICENSE)
+[![Build](https://github.com/franneck94/Python-Project-Template/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/vypiemzalyubov/test-automation-rest-api/actions)
 
 It is a complete framework for automating API testing using **Python** and **Pytest**. This framework is used in the [**"Send Request"**](https://send-request.me/) API. 
 
