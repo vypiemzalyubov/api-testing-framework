@@ -117,3 +117,14 @@ docker run api-testing-runner
 # Running with Docker Compose
 docker-compose up --build
 ```
+
+## :rocket: Github workflow
+- Go to [**"Run workflow"**](https://github.com/vypiemzalyubov/api-testing-framework/actions/workflows/run.yml) in GitHub Actions
+
+  ```yml
+  # Options in workflow
+    - all_tests
+    - positive_tests
+    - negative_tests
+  ```
+- View [**Allure test results**](https://vypiemzalyubov.github.io/test-automation-rest-api/) after completing the GitHub Actions workflow
