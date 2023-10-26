@@ -5,7 +5,8 @@
 
 It is a complete framework for automating API testing using **Python** and **Pytest**. This framework is used in the [**"Send Request"**](https://send-request.me/) API. 
 
-CRUD methods (**GET**, **POST**, **PUT** and **DELETE**) are supported.
+- CRUD methods (**GET**, **POST**, **PUT** and **DELETE**) are supported
+- Continuous testing with [**GitHub Actions**](https://github.com/features/actions/)
 
 ## :rocket: Prerequisites:
 
