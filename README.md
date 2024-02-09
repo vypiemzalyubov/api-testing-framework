@@ -116,8 +116,8 @@ pytest -m "negative"
 # Build an image named "api-testing-runner"
 docker build -t api-testing-runner .
 
-# Starts the container and automatically deletes on exit
-docker run -rm api-testing-runner
+# Launch the container
+docker run api-testing-runner
 
 # Running with Docker Compose
 docker-compose up --build
